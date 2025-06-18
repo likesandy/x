@@ -1,6 +1,7 @@
-import { XSdk } from '../index';
-describe('XMarkdown', () => {
+import { XRequest } from '../index';
+
+describe('XRequest', () => {
   it('main', () => {
-    expect(XSdk()).toBe('XSdk');
+    expect(typeof XRequest).toBe('function');
   });
 });
