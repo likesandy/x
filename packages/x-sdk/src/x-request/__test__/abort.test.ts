@@ -21,7 +21,8 @@ const options: XRequestOptions = {
 
 describe('XRequest Class', () => {
   test('should throw error when abort', async () => {
-    fetch.mockResponseOnce(() => {
+    // already mocked by jest-fetch-mock
+    (fetch as any).mockResponseOnce(() => {
       return Promise.resolve({
         body: '{}',
         headers: {

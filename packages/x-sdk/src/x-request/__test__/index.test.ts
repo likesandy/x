@@ -221,7 +221,7 @@ describe('XRequest Class', () => {
       middlewares: {
         onRequest: async (_baseURL, options) => {
           // ts-ignore
-          expect(options?.headers?.global).toEqual('globalValue');
+          expect((options?.headers as any)?.global as any).toEqual('globalValue');
           return Promise.resolve([_baseURL, options]);
         },
       },
