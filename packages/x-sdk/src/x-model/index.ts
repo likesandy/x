@@ -1,13 +1,13 @@
 import { AnyObject } from '../_util/type';
-import { XRequestClass, XRequestOptions } from '../x-request';
+import XRequest, { XRequestOptions } from '../x-request';
 
-type XRequestMessageContent = string | AnyObject;
-interface XModelMessage extends AnyObject {
+export type XRequestMessageContent = string | AnyObject;
+export interface XModelMessage extends AnyObject {
   role?: string;
   content?: XRequestMessageContent;
 }
 
-interface XModelParams extends AnyObject {
+export interface XModelParams extends AnyObject {
   model: string;
   messages: XModelMessage[];
 
@@ -75,7 +75,7 @@ interface XModelParams extends AnyObject {
 }
 
 function XModel(baseURL: string, params: XModelParams, options?: XRequestOptions) {
-  return new XRequestClass(baseURL, {
+  return XRequest(baseURL, {
     params,
     ...options,
   });

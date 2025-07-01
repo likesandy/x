@@ -20,7 +20,7 @@ export interface XRequestCallbacks<Output> {
   /**
    * @description Callback when the request is updated
    */
-  onUpdate: (chunk: Output) => void;
+  onUpdate?: (chunk: Output) => void;
 }
 
 export interface XRequestOptions<Input = AnyObject, Output = SSEOutput> {
@@ -55,7 +55,9 @@ export interface XRequestOptions<Input = AnyObject, Output = SSEOutput> {
   /**
    * @description Custom stream transformer, can use to adapt the stream data to the custom format
    */
-  transformStream?: XStreamOptions<Output>['transformStream'];
+  transformStream?:
+    | XStreamOptions<Output>['transformStream']
+    | ((baseURL: string, responseHeaders: Headers) => XStreamOptions<Output>['transformStream']);
 }
 
 export type XRequestGlobalOptions<Input, Output> = Pick<
@@ -84,13 +86,19 @@ export function setXRequestGlobalOptions<Input, Output>(
 
 export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
   readonly baseURL: string;
-  private options: XRequestOptions<Input, Output>;
+  readonly options: XRequestOptions<Input, Output>;
+
+  private _asyncHandler!: Promise<any>;
 
   private timeoutHandler!: number;
   private _isTimeout = false;
   private streamTimeoutHandler!: number;
   private _isStreamTimeout = false;
   private abortController!: AbortController;
+
+  public get asyncHandler() {
+    return this._asyncHandler;
+  }
 
   public get isTimeout() {
     return this._isTimeout;
@@ -108,7 +116,8 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
     this._isStreamTimeout = value;
   }
 
-  constructor(baseURL: string, options: XRequestOptions<Input, Output>) {
+  constructor(baseURL: string, options?: XRequestOptions<Input, Output>) {
+    if (!baseURL || typeof baseURL !== 'string') throw new Error('The baseURL is not valid!');
     this.baseURL = baseURL;
     this.options = options || {};
     this.init();
@@ -121,7 +130,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
   }
 
   private init() {
-    const abortController = new AbortController();
+    this.abortController = new AbortController();
     const {
       callbacks,
       params = {},
@@ -130,6 +139,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
       fetch,
       timeout,
       streamTimeout,
+      middlewares,
     } = this.options;
     const requestInit = {
       method: 'POST',
@@ -137,7 +147,8 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
         ...params,
       }),
       headers: Object.assign({}, globalOptions.headers || {}, headers),
-      signal: abortController.signal,
+      signal: this.abortController.signal,
+      middlewares,
     };
     if (timeout && timeout > 0) {
       this.timeoutHandler = window.setTimeout(() => {
@@ -145,16 +156,22 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
         callbacks?.onError?.(new Error('Request timeout!'));
       }, timeout);
     }
-    xFetch(this.baseURL, {
+    // save and export a async handler to wait for the request to be finished
+    // though it is not necessary, but it is useful for some scenarios
+    this._asyncHandler = xFetch(this.baseURL, {
       fetch,
       ...requestInit,
     })
-      .then((response) => {
+      .then(async (response) => {
         clearTimeout(this.timeoutHandler);
         if (this.isTimeout) return;
 
         if (transformStream) {
-          this.customResponseHandler<Output>(response, callbacks, transformStream, streamTimeout);
+          let transformer = transformStream as XStreamOptions<Output>['transformStream'];
+          if (typeof transformStream === 'function') {
+            transformer = transformStream(this.baseURL, response.headers);
+          }
+          await this.customResponseHandler<Output>(response, callbacks, transformer, streamTimeout);
           return;
         }
         const contentType = response.headers.get('content-type') || '';
@@ -162,11 +179,11 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
         switch (mimeType) {
           /** SSE */
           case 'text/event-stream':
-            this.sseResponseHandler<Output>(response, callbacks, streamTimeout);
+            await this.sseResponseHandler<Output>(response, callbacks, streamTimeout);
             break;
           /** JSON */
           case 'application/json':
-            this.jsonResponseHandler<Output>(response, callbacks);
+            await this.jsonResponseHandler<Output>(response, callbacks);
             break;
           default:
             throw new Error(`The response content-type: ${contentType} is not support!`);
@@ -174,9 +191,12 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
       })
       .catch((error) => {
         clearTimeout(this.timeoutHandler);
-        const err = error instanceof Error ? error : new Error('Unknown error!');
+        // abort() throw a DOMException, so we need to check it
+        const err =
+          error instanceof Error || error instanceof DOMException
+            ? error
+            : new Error('Unknown error!');
         callbacks?.onError?.(err);
-        throw err;
       });
   }
 
@@ -190,7 +210,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
       readableStream: response.body!,
       transformStream,
     });
-    this.processStream<Output>(stream, callbacks, streamTimeout);
+    await this.processStream<Output>(stream, callbacks, streamTimeout);
   };
 
   private sseResponseHandler = async <Output = SSEOutput>(
@@ -201,7 +221,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
     const stream = XStream<Output>({
       readableStream: response.body!,
     });
-    this.processStream(stream, callbacks, streamTimeout);
+    await this.processStream(stream, callbacks, streamTimeout);
   };
 
   private async processStream<Output>(
@@ -211,21 +231,10 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
   ) {
     const chunks: Output[] = [];
     const iterator = stream[Symbol.asyncIterator]();
-    // if streamTimeout is set, start the timeout timer
-    if (streamTimeout) {
-      this.streamTimeoutHandler = window.setTimeout(() => {
-        this.isStreamTimeout = true;
-        callbacks?.onError?.(new Error('Request stream timeout!'));
-      }, streamTimeout);
-    }
-    let result = await iterator.next();
-    while (!result.done) {
-      if (streamTimeout) {
-        clearTimeout(this.streamTimeoutHandler);
-        if (this.isStreamTimeout) return;
-      }
-      chunks.push(result.value);
-      callbacks?.onUpdate?.(result.value);
+    let result: IteratorResult<Output, any>;
+    do {
+      // if streamTimeout is set, start the stream timeout timer
+      // every time the stream is updated, reset the timer
       if (streamTimeout) {
         this.streamTimeoutHandler = window.setTimeout(() => {
           this.isStreamTimeout = true;
@@ -233,7 +242,13 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
         }, streamTimeout);
       }
       result = await iterator.next();
-    }
+      chunks.push(result.value);
+      callbacks?.onUpdate?.(result.value);
+      clearTimeout(this.streamTimeoutHandler);
+      if (this.isStreamTimeout) {
+        break;
+      }
+    } while (!result.done);
     if (streamTimeout) {
       clearTimeout(this.streamTimeoutHandler);
       if (this.isStreamTimeout) return;
@@ -247,12 +262,13 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
   ) => {
     const chunk: Output = await response.json();
     callbacks?.onUpdate?.(chunk);
+    // keep type consistency with stream mode
     callbacks?.onSuccess?.([chunk]);
   };
 }
 
-const XRequest = (baseURL: string, options: XRequestOptions) => {
+function XRequest(baseURL: string, options?: XRequestOptions): XRequestClass {
   return new XRequestClass(baseURL, options);
-};
+}
 
 export default XRequest;
