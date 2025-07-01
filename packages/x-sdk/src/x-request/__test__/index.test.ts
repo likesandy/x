@@ -133,6 +133,31 @@ describe('XRequest Class', () => {
     expect(callbacks.onUpdate).toHaveBeenCalledWith(ndJsonData.split(ND_JSON_SEPARATOR)[1]);
   });
 
+  test('should create request and handle custom response by response headers', async () => {
+    mockedXFetch.mockResolvedValueOnce({
+      headers: {
+        get: jest.fn().mockReturnValue('application/x-custom'),
+      },
+      body: mockNdJsonReadableStream(),
+    });
+    const request = XRequest(baseURL, {
+      ...options,
+      transformStream: (_, headers) => {
+        if (headers.get('Content-Type') === 'application/x-custom') {
+          return new TransformStream();
+        }
+      },
+    });
+    await request.asyncHandler;
+    expect(callbacks.onSuccess).toHaveBeenCalledWith([
+      ndJsonData.split(ND_JSON_SEPARATOR)[0],
+      ndJsonData.split(ND_JSON_SEPARATOR)[1],
+    ]);
+    expect(callbacks.onError).not.toHaveBeenCalled();
+    expect(callbacks.onUpdate).toHaveBeenCalledWith(ndJsonData.split(ND_JSON_SEPARATOR)[0]);
+    expect(callbacks.onUpdate).toHaveBeenCalledWith(ndJsonData.split(ND_JSON_SEPARATOR)[1]);
+  });
+
   test('should handle error response', async () => {
     mockedXFetch.mockRejectedValueOnce(new Error('Fetch failed'));
     const request = XRequest(baseURL, options);
