@@ -8,8 +8,7 @@ export interface ComponentToken {}
 export interface ActionsToken extends FullToken<'Actions'> {}
 
 const genActionsStyle: GenerateStyle<ActionsToken> = (token) => {
-  const { componentCls, calc } = token;
-
+  const { componentCls } = token;
   return {
     [componentCls]: {
       [`${componentCls}-list`]: {
@@ -46,7 +45,7 @@ const genActionsStyle: GenerateStyle<ActionsToken> = (token) => {
       '& .border': {
         padding: `${token.paddingXS} ${token.paddingSM}`,
         gap: token.paddingSM,
-        borderRadius: calc(token.borderRadiusLG).mul(1.5).equal(),
+        borderRadius: token.borderRadiusLG,
         backgroundColor: token.colorBorderSecondary,
         color: token.colorTextSecondary,
 

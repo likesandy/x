@@ -1,6 +1,6 @@
 import { LoadingOutlined, TagsOutlined } from '@ant-design/icons';
-import { ThoughtChain, useXAgent } from '@ant-design/x';
 import type { ThoughtChainItem } from '@ant-design/x';
+import { ThoughtChain, useXAgent } from '@ant-design/x';
 import { Button, Descriptions, Flex, Input, Splitter, Typography } from 'antd';
 import React, { useRef, useState } from 'react';
 
@@ -45,7 +45,7 @@ const App = () => {
 
   const request = () => {
     setLines([]);
-    setThoughtChainStatus('pending');
+    setThoughtChainStatus('loading');
     setStatus('pending');
     agent.request(
       {
@@ -83,7 +83,7 @@ const App = () => {
               const modalMessage = JSON.parse(value || '{}');
               const content = modalMessage?.choices?.[0]?.delta?.content || '';
               controller.enqueue(content);
-            } catch (error) {
+            } catch (_error) {
               controller.enqueue('');
             }
           });
@@ -99,7 +99,7 @@ const App = () => {
   return (
     <Splitter>
       <Splitter.Panel style={{ height: 300 }}>
-        <Splitter layout="vertical">
+        <Splitter orientation="vertical">
           <Splitter.Panel style={{ margin: '0 16px' }}>
             <Flex gap="large" vertical>
               <Input
