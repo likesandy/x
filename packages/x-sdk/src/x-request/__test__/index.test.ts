@@ -1,8 +1,7 @@
-import XRequest, { setXRequestGlobalOptions } from '../index';
-import xFetch from '../x-fetch';
-
 import type { SSEOutput } from '../../x-stream';
 import type { XRequestCallbacks, XRequestOptions } from '../index';
+import XRequest, { setXRequestGlobalOptions } from '../index';
+import xFetch from '../x-fetch';
 
 jest.mock('../x-fetch', () => jest.fn());
 
@@ -251,7 +250,7 @@ describe('XRequest Class', () => {
     expect(request.isTimeout).toBe(false);
     await request.asyncHandler;
     expect(callbacks.onSuccess).not.toHaveBeenCalled();
-    expect(callbacks.onError).toHaveBeenCalledWith(new Error(`Request timeout!`));
+    expect(callbacks.onError).toHaveBeenCalledWith(new Error(`TimeoutError`));
     expect(request.isTimeout).toBe(true);
   });
 
@@ -269,7 +268,7 @@ describe('XRequest Class', () => {
     expect(request.isStreamTimeout).toBe(false);
     await request.asyncHandler;
     expect(callbacks.onSuccess).not.toHaveBeenCalled();
-    expect(callbacks.onError).toHaveBeenCalledWith(new Error(`Request stream timeout!`));
+    expect(callbacks.onError).toHaveBeenCalledWith(new Error(`StreamTimeoutError`));
     expect(request.isStreamTimeout).toBe(true);
   });
 });

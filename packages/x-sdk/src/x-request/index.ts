@@ -1,10 +1,8 @@
-import XStream from '../x-stream';
-import xFetch from './x-fetch';
-
-import type { SSEOutput, XReadableStream, XStreamOptions } from '../x-stream';
-import type { XFetchMiddlewares, XFetchOptions } from './x-fetch';
-
 import type { AnyObject } from '../_util/type';
+import type { SSEOutput, XReadableStream, XStreamOptions } from '../x-stream';
+import XStream from '../x-stream';
+import type { XFetchMiddlewares, XFetchOptions } from './x-fetch';
+import xFetch from './x-fetch';
 
 export interface XRequestCallbacks<Output> {
   /**
@@ -64,6 +62,11 @@ export type XRequestGlobalOptions<Input, Output> = Pick<
   XRequestOptions<Input, Output>,
   'headers' | 'timeout' | 'streamTimeout' | 'middlewares' | 'fetch' | 'transformStream'
 >;
+
+export type XRequestFunction<Input = AnyObject, Output = SSEOutput> = (
+  baseURL: string,
+  options?: XRequestOptions<Input, Output>,
+) => XRequestClass<Input, Output>;
 
 /**
  * @description Global options for the request
@@ -153,7 +156,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
     if (timeout && timeout > 0) {
       this.timeoutHandler = window.setTimeout(() => {
         this.isTimeout = true;
-        callbacks?.onError?.(new Error('Request timeout!'));
+        callbacks?.onError?.(new Error('TimeoutError'));
       }, timeout);
     }
     // save and export a async handler to wait for the request to be finished
@@ -238,7 +241,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
       if (streamTimeout) {
         this.streamTimeoutHandler = window.setTimeout(() => {
           this.isStreamTimeout = true;
-          callbacks?.onError?.(new Error('Request stream timeout!'));
+          callbacks?.onError?.(new Error('StreamTimeoutError'));
         }, streamTimeout);
       }
       result = await iterator.next();
@@ -267,7 +270,10 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
   };
 }
 
-function XRequest(baseURL: string, options?: XRequestOptions): XRequestClass {
+function XRequest<Input = AnyObject, Output = SSEOutput>(
+  baseURL: string,
+  options?: XRequestOptions<Input, Output>,
+): XRequestClass<Input, Output> {
   return new XRequestClass(baseURL, options);
 }
 
