@@ -150,7 +150,7 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
         [`${componentCls}-list-remove`]: {
           position: 'absolute',
           top: 0,
-          right: 0,
+          insetInlineEnd: 0,
           fontSize: 16,
           display: 'flex',
           alignItems: 'center',
