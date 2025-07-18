@@ -9,4 +9,4 @@ type FileCardType = typeof FileCard & {
 
 export type { FileCardProps } from './FileCard';
 
-export default FileCard;
+export default FileCard as FileCardType;
