@@ -56,7 +56,7 @@ export type FileCardProps = FileExtendsProps & {
   icon?: React.ReactNode | PresetIcons;
   type?: 'file' | 'image' | 'audio' | 'video';
   onClick?: () => void;
-};
+}
 
 type CompoundedComponent = {
   List: typeof List;
@@ -164,7 +164,7 @@ const FileCard: React.FC<FileCardProps> & CompoundedComponent = (props) => {
   const prefixCls = getPrefixCls('file-card', customizePrefixCls);
   const contextConfig = useXComponentConfig('fileCard');
 
-  const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
+  const [hashId, cssVarCls] = useStyle(prefixCls);
 
   const mergedCls = classnames(
     prefixCls,
@@ -265,7 +265,7 @@ const FileCard: React.FC<FileCardProps> & CompoundedComponent = (props) => {
     );
   };
 
-  return wrapCSSVar(
+  return (
     <div
       {...domProps}
       className={mergedCls}
@@ -276,7 +276,7 @@ const FileCard: React.FC<FileCardProps> & CompoundedComponent = (props) => {
       }}
     >
       <ContentNode />
-    </div>,
+    </div>
   );
 };
 

@@ -30,7 +30,7 @@ const List: React.FC<FileCardListProps> = (props) => {
 
   const { direction, getPrefixCls } = useXProviderContext();
   const prefixCls = getPrefixCls('file-card', customizePrefixCls);
-  const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
+  const [hashId, cssVarCls] = useStyle(prefixCls);
   const compCls = `${prefixCls}-list`;
 
   const mergedCls = classnames(
@@ -52,7 +52,7 @@ const List: React.FC<FileCardListProps> = (props) => {
     onRemove?.(item, newList);
   };
 
-  return wrapCSSVar(
+  return (
     <div className={mergedCls} style={style}>
       {list?.map((item, index) => (
         <div className={`${compCls}-item`} key={index}>
@@ -64,7 +64,7 @@ const List: React.FC<FileCardListProps> = (props) => {
           )}
         </div>
       ))}
-    </div>,
+    </div>
   );
 };
 
