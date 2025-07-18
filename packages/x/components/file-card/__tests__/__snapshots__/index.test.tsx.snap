@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`FileCard Component FileCard component work 1`] = `
 <div
-  class="ant-file-card"
+  class="ant-file-card css-var-root"
 >
   <div
     class="ant-file-card-file"
@@ -60,7 +60,7 @@ exports[`FileCard Component FileCard component work 1`] = `
 
 exports[`FileCard Component rtl render component should be rendered correctly in RTL direction 1`] = `
 <div
-  class="ant-file-card ant-file-card-rtl"
+  class="ant-file-card css-var-root ant-file-card-rtl"
 >
   <div
     class="ant-file-card-file"
