@@ -13,7 +13,6 @@ import React, { useMemo } from 'react';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import { useXProviderContext } from '../x-provider';
-import List from './List';
 import File from './components/File';
 import AudioIcon from './icons/audio';
 import VideoIcon from './icons/video';
@@ -57,10 +56,6 @@ export type FileCardProps = FileExtendsProps & {
   type?: 'file' | 'image' | 'audio' | 'video';
   onClick?: () => void;
 }
-
-type CompoundedComponent = {
-  List: typeof List;
-};
 
 const IMAGE_EXT = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'svg'];
 const AUDIO_EXT = ['mp3', 'wav', 'flac', 'ape', 'aac', 'ogg'];
@@ -135,7 +130,7 @@ const DEFAULT_ICON = {
   key: 'default',
 };
 
-const FileCard: React.FC<FileCardProps> & CompoundedComponent = (props) => {
+const FileCard: React.FC<FileCardProps> = (props) => {
   const {
     prefixCls: customizePrefixCls,
     style,
@@ -283,7 +278,5 @@ const FileCard: React.FC<FileCardProps> & CompoundedComponent = (props) => {
 if (process.env.NODE_ENV !== 'production') {
   FileCard.displayName = 'FileCard';
 }
-
-FileCard.List = List;
 
 export default FileCard;
