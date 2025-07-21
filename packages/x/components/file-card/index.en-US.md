@@ -1,9 +1,9 @@
 ---
 category: FileCard
 group:
-  title: Feedback
+  title: Express
   order: 0
-title: Think
+title: FileCard
 description: Display files in the form of cards.
 demo:
   cols: 1

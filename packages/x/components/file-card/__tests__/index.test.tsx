@@ -2,7 +2,7 @@ import React from 'react';
 
 import mountTest from '../../../tests/shared/mountTest';
 import rtlTest from '../../../tests/shared/rtlTest';
-import { render } from '../../../tests/utils';
+import { fireEvent, render, waitFakeTimer } from '../../../tests/utils';
 import FileCard from '../index';
 
 describe('FileCard Component', () => {
@@ -23,6 +23,13 @@ describe('FileCard Component', () => {
     const element = container.querySelector<HTMLDivElement>('.ant-file-card');
     expect(element).toBeTruthy();
     expect(element).toMatchSnapshot();
+  });
+
+  it('FileCard support classnames and styles', () => {
+    const { container } = render(<FileCard name="test-file.txt" size={1024} classNames={{ name: 'custom-class' }} styles={{ name: { color: 'red' } }} />);
+    const namePrefix = container.querySelector<HTMLDivElement>('.ant-file-card-file-name');
+    expect(namePrefix).toHaveClass('custom-class');
+    expect(namePrefix).toHaveStyle({color: 'red'});
   });
 
   it('FileCard support name and size', () => {
@@ -54,6 +61,28 @@ describe('FileCard Component', () => {
     expect(element).toBeTruthy();
   });
 
+  it('FileCard support audio', () => {
+    const { container } = render(
+      <FileCard
+        name="audio-file.mp3"
+        src="https://mdn.alipayobjects.com/cto_doraemon/afts/file/HFTcTLugiIAAAAAAgCAAAAgAehe3AQBr"
+      />,
+    );
+    const element = container.querySelector<HTMLDivElement>('.ant-file-card-audio');
+    expect(element).toBeTruthy();
+  });
+
+  it('FileCard support video', () => {
+    const { container } = render(
+      <FileCard
+        name="video-file.mp4"
+        src="https://mdn.alipayobjects.com/doraemon_plugin/afts/file/vl7tSa-m3jEAAAAAAAAAAAAAeur1AQBr"
+      />,
+    );
+    const element = container.querySelector<HTMLDivElement>('.ant-file-card-video');
+    expect(element).toBeTruthy();
+  });
+
   it('FileCard support mask', () => {
     const { container } = render(
       <FileCard name="test-file.txt" size={1024} mask={<div className="test-mask" />} />,
@@ -74,5 +103,44 @@ describe('FileCard Component', () => {
     expect(element).toBeFalsy();
     const file = container.querySelector<HTMLDivElement>('.ant-file-card-file');
     expect(file).toBeTruthy();
+  });
+
+  it('FileCard support list', () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+      />,
+    );
+    const element = container.querySelector<HTMLDivElement>('.ant-file-card-list');
+    expect(element).toBeTruthy();
+    expect(container.querySelectorAll('.ant-file-card').length).toBe(2);
+  });
+
+  it('FileCard support list remove', async () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+      />,
+    );
+    expect(container.querySelectorAll('.ant-file-card').length).toBe(2);
+    fireEvent.click(container.querySelector('.ant-file-card-list-remove')!);
+    await waitFakeTimer();
+    expect(container.querySelectorAll('.ant-file-card').length).toBe(1);
   });
 });

@@ -13,6 +13,16 @@ const App = () => {
         name="video-file.mp4"
         src="https://mdn.alipayobjects.com/doraemon_plugin/afts/file/vl7tSa-m3jEAAAAAAAAAAAAAeur1AQBr"
       />
+      <FileCard
+        name="audio-file.mp3"
+        size={1024}
+        type="file"
+      />
+      <FileCard
+        name="video-file.mp4"
+        size={1024}
+        type="file"
+      />
     </Flex>
   );
 };
