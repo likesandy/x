@@ -1,10 +1,14 @@
 import { AnyObject } from '../_util/type';
 import XRequest, { XRequestOptions } from '../x-request';
 
-export type XRequestMessageContent = string | AnyObject;
 export interface XModelMessage extends AnyObject {
-  role?: string;
-  content?: XRequestMessageContent;
+  role: string;
+  content:
+    | string
+    | {
+        text: string;
+        type: string;
+      };
 }
 
 export interface XModelParams extends AnyObject {
@@ -64,7 +68,7 @@ export interface XModelParams extends AnyObject {
     search_context_size?: string;
     user_location?: {
       type: 'approximate';
-      approximate: {
+      approximate?: {
         city?: string;
         country?: string;
         region?: string;
@@ -74,11 +78,52 @@ export interface XModelParams extends AnyObject {
   };
 }
 
-function XModel(baseURL: string, params: XModelParams, options?: XRequestOptions) {
-  return XRequest(baseURL, {
-    params,
-    ...options,
-  });
+export interface XModelResponse {
+  choices: {
+    index: number;
+    message: {
+      role: string;
+      content: string | null;
+      refusal: string | null;
+      annotations: {
+        type: 'url_citation';
+        end_index: number;
+        start_index: number;
+        url: string;
+        title: string;
+      }[];
+    };
+    logprobs: AnyObject | null;
+    finish_reason: 'stop' | 'length' | 'content_filter' | 'tool_calls' | string;
+  }[];
+  created: number;
+  id: string;
+  model: string;
+  object: 'chat.completion' | 'chat.completion.chunk';
+  service_tier: string | null;
+  system_fingerprint: string | null;
+  usage: {
+    completion_tokens: number;
+    prompt_tokens: number;
+    total_tokens: number;
+    completion_tokens_details: {
+      reasoning_tokens: number;
+      audio_tokens: number;
+      accepted_prediction_tokens: number;
+      rejected_prediction_tokens: number;
+    };
+    prompt_tokens_details: {
+      cached_tokens: number;
+      audio_tokens: number;
+    };
+  };
+}
+
+function XModel<Input = XModelParams, Output = XModelResponse>(
+  baseURL: string,
+  options?: XRequestOptions<Input, Output>,
+) {
+  return XRequest(baseURL, options);
 }
 
 export default XModel;
