@@ -5,13 +5,15 @@
     "compile": "father build",
     "tsc": "tsc --noEmit",
     "lint": "npm run tsc && npm run lint:script && npm run lint:md",
-    "precompile": "echo \"true\"  && exit 0",
     "lint:md": "remark . -f -q",
     "lint:script": "biome lint",
-    "prestart": "echo \"true\"  && exit 0",
-    "pretest": "echo \"true\"  && exit 0",
+    "pretest": "npm run version",
+    "predist": "npm run version && npm run plugin:meta",
     "test": "jest --config .jest.js --no-cache --collect-coverage",
     "coverage": "jest --config .jest.js --no-cache --collect-coverage --coverage",
+    "plugin:meta": "tsx scripts/generate-plugin-meta.ts",
+    "prestart": "npm run version && npm run plugin:meta",
+    "precompile": "npm run prestart",
     "version": "tsx scripts/generate-version.ts",
     "test:dekko": "tsx ./tests/dekko/index.test.ts"
   },
@@ -22,19 +24,44 @@
   "files": [
     "dist",
     "es",
-    "lib"
+    "lib",
+    "plugins",
+    "themes"
   ],
   "license": "MIT",
   "description": "placeholder for @ant-design/x-markdown",
-  "dependencies": {},
+  "dependencies": {
+    "@ant-design/cssinjs": "^2.0.0-alpha.6",
+    "@ant-design/cssinjs-utils": "^2.0.0-alpha.2",
+    "@ant-design/fast-color": "^3.0.0",
+    "@ant-design/icons": "^6.0.0",
+    "@react-spring/web": "^10.0.1",
+    "classnames": "^2.5.1",
+    "html-react-parser": "^5.2.5",
+    "katex": "^0.16.22",
+    "lodash.throttle": "^4.1.1",
+    "marked": "^15.0.12",
+    "react-syntax-highlighter": "^15.6.1",
+    "mermaid": "^11.8.1"
+  },
   "devDependencies": {
+    "@types/lodash.throttle": "^4.1.9",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "@umijs/mako": "^0.11.10",
+    "antd": "6.0.0-alpha.1",
+    "antd-style": "^3.6.3",
+    "antd-token-previewer": "^3.0.0-alpha.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ant-design/x"
   }
 }
