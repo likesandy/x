@@ -20,24 +20,61 @@ export default defineConfig({
   },
   esm: {
     input: 'src',
+    overrides: {
+      'src/plugins': {
+        output: 'plugins',
+      },
+      'src/themes': {
+        output: 'themes',
+      },
+    },
   },
   cjs: {
     input: 'src',
   },
   umd: {
-    entry: 'src/index.ts',
-    name: 'XMarkdown',
-    output: {
-      path: 'dist/',
-      filename: 'x-markdown',
+    entry: {
+      'src/index.ts': {
+        name: 'XMarkdown',
+        sourcemap: true,
+        generateUnminified: true,
+        output: {
+          path: 'dist/',
+          filename: 'x-markdown',
+        },
+      },
+      'src/plugins/HighlightCode/index.tsx': {
+        name: 'HighlightCode',
+        sourcemap: true,
+        generateUnminified: true,
+        output: {
+          path: 'dist/plugins',
+          filename: 'code-high-light',
+        },
+      },
+      'src/plugins/Latex/index.ts': {
+        name: 'Latex',
+        sourcemap: true,
+        generateUnminified: true,
+        output: {
+          path: 'dist/plugins',
+          filename: 'latex',
+        },
+      },
+      'src/plugins/Mermaid/index.tsx': {
+        name: 'Mermaid',
+        sourcemap: true,
+        generateUnminified: true,
+        output: {
+          path: 'dist/plugins',
+          filename: 'mermaid',
+        },
+      },
     },
-    sourcemap: true,
-    generateUnminified: true,
     externals: {
       react: 'React',
       'react-dom': 'ReactDOM',
       '@ant-design/cssinjs': 'antdCssinjs',
-      antd: 'antd',
     },
     transformRuntime: {
       absoluteRuntime: process.cwd(),
@@ -47,7 +84,7 @@ export default defineConfig({
         memo.plugin('codecov').use(CodecovWebpackPlugin, [
           {
             enableBundleAnalysis: true,
-            bundleName: 'antdxmarkdown',
+            bundleName: 'x-markdown',
             uploadToken: process.env.CODECOV_TOKEN,
             gitService: 'github',
           },
@@ -55,12 +92,26 @@ export default defineConfig({
         memo.plugin('circular-dependency-checker').use(CircularDependencyPlugin, [
           {
             failOnError: true,
+            exclude: /node_modules[\\/](chevrotain|d3-.*|langium)/,
           },
         ]);
         memo.plugin('duplicate-package-checker').use(DuplicatePackageCheckerPlugin, [
           {
             verbose: true,
             emitError: true,
+            exclude: (instance: any) => {
+              // 排除特定包
+              if (
+                instance.name === 'cose-base' ||
+                instance.name === 'layout-base' ||
+                instance.name.startsWith('d3-') ||
+                instance.name === 'internmap'
+              ) {
+                return true;
+              }
+
+              return false;
+            },
           },
         ]);
       }
