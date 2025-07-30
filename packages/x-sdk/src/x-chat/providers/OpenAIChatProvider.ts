@@ -1,4 +1,4 @@
-import { XModelMessage, XModelParams, XModelResponse } from '../../x-model';
+import { XModelMessage, XModelParams } from '../../x-model';
 import { XRequestOptions } from '../../x-request';
 import { SSEFields } from '../../x-stream';
 import AbstractChatProvider, { ChatProviderConfig, TransformMessage } from './AbstractChatProvider';
@@ -10,9 +10,9 @@ import AbstractChatProvider, { ChatProviderConfig, TransformMessage } from './Ab
  * @template Output 响应数据类型
  */
 export default class OpenAIChatProvider<
-  ChatMessage = XModelMessage,
+  ChatMessage extends XModelMessage = XModelMessage,
   Input = XModelParams,
-  Output = Partial<Record<SSEFields, XModelResponse>>,
+  Output extends Partial<Record<SSEFields, any>> = Partial<Record<SSEFields, any>>,
 > extends AbstractChatProvider<ChatMessage, Input, Output> {
   constructor(config: ChatProviderConfig<Input, Output>) {
     super(config);
@@ -29,7 +29,7 @@ export default class OpenAIChatProvider<
       message = {
         role: 'user',
         content: requestParams,
-      } as ChatMessage;
+      } as unknown as ChatMessage;
     } else {
       message = requestParams as ChatMessage;
     }
@@ -43,17 +43,22 @@ export default class OpenAIChatProvider<
   }
 
   transformMessage(info: TransformMessage<ChatMessage, Output>): ChatMessage {
-    const { chunk, chunks, originMessage } = info;
-
-    if (chunk) {
-      return chunk as unknown as ChatMessage;
+    const { originMessage, chunk } = info;
+    let currentContent = '';
+    try {
+      if (chunk && chunk.data !== '[DONE]') {
+        const message = JSON.parse(chunk.data);
+        currentContent = message?.choices?.[0]?.delta?.content || '';
+      }
+    } catch (error) {
+      console.error(error);
     }
 
-    if (Array.isArray(chunks)) {
-      const chunk = chunks?.length > 0 ? chunks?.[chunks?.length - 1] : undefined;
-      return originMessage ? originMessage : (chunk as unknown as ChatMessage);
-    }
+    const content = `${originMessage?.content || ''}${currentContent}`;
 
-    return chunks as unknown as ChatMessage;
+    return {
+      content: content,
+      role: 'assistant',
+    } as ChatMessage;
   }
 }
