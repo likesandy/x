@@ -29,8 +29,10 @@ describe('XModel Function', () => {
   test('should throw error on invalid baseURL', () => {
     expect(() =>
       XModel('', {
-        model: 'GPT-3.5-turbo',
-        messages: [],
+        params: {
+          model: 'GPT-3.5-turbo',
+          messages: [],
+        },
       }),
     ).toThrow('The baseURL is not valid!');
   });
@@ -44,14 +46,7 @@ describe('XModel Function', () => {
       },
       json: jest.fn().mockResolvedValueOnce(options.params),
     });
-    const request = XModel(
-      baseURL,
-      {
-        model: 'GPT-3.5-turbo',
-        messages: [],
-      },
-      options,
-    );
+    const request = XModel(baseURL, options);
     await request.asyncHandler;
     expect(callbacks.onSuccess).toHaveBeenCalledWith([options.params]);
     expect(callbacks.onError).not.toHaveBeenCalled();

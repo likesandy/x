@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useState } from 'react';
+import React, { useImperativeHandle } from 'react';
 import { render, sleep } from '../../../tests/utils';
 import useXConversations, { ConversationData } from '../index';
 
@@ -16,16 +16,17 @@ describe('useXConversations tests', () => {
   });
 
   const Demo = React.forwardRef((config: any, ref: any) => {
-    const { conversations, add, remove, set, get } = useXConversations({
-      defaultConversations: config.defaultConversations || [],
-    });
+    const { conversations, addConversation, removeConversation, setConversation, getConversation } =
+      useXConversations({
+        defaultConversations: config.defaultConversations || [],
+      });
 
     useImperativeHandle(ref, () => ({
       conversations,
-      add,
-      remove,
-      set,
-      get,
+      addConversation,
+      removeConversation,
+      setConversation,
+      getConversation,
     }));
     return (
       <>
@@ -51,7 +52,7 @@ describe('useXConversations tests', () => {
     expect(ref.current?.conversations).toEqual(list);
   });
 
-  it('should add, set, remove, get work correctly', async () => {
+  it('should addConversation, setConversation, removeConversation, getConversation work correctly', async () => {
     const list: ConversationData[] = [
       {
         key: '1',
@@ -61,20 +62,20 @@ describe('useXConversations tests', () => {
     const ref = React.createRef<any>();
     const { queryByText } = render(<Demo ref={ref} defaultConversations={list} />);
 
-    const conversation = ref.current?.get('1');
+    const conversation = ref.current?.getConversation('1');
     expect(conversation).toEqual(list[0]);
 
-    ref.current?.add({ key: '2', label: 'Chat 2' });
+    ref.current?.addConversation({ key: '2', label: 'Chat 2' });
     // wait for component rerender
     await sleep(500);
     expect(ref.current?.conversations?.length).toEqual(2);
     expect(queryByText('Chat 2')).toBeTruthy();
 
-    ref.current?.set('2', { label: 'Chat 3' });
+    ref.current?.setConversation('2', { label: 'Chat 3' });
     await sleep(500);
     expect(queryByText('Chat 3')).toBeTruthy();
 
-    ref.current?.remove('2');
+    ref.current?.removeConversation('2');
     await sleep(500);
     expect(ref.current?.conversations?.length).toEqual(1);
     expect(queryByText('Chat 3')).not.toBeTruthy();
