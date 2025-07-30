@@ -20,8 +20,6 @@ coverDark: https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*lQydTrtLz9YAAA
 
 <!-- prettier-ignore -->
 <code src="./demos/x-chat/basic.tsx">基本</code>
-<code src="./demos/x-chat/stream.tsx">流式输出</code>
-<code src="./demos/x-chat/suggestions.tsx">多项建议</code>
 <code src="./demos/x-chat/model.tsx">模型接入</code>
 
 ## API
