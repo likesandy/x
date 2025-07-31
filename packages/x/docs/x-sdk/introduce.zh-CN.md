@@ -41,9 +41,11 @@ export default () => {
     setStatus('pending');
 
     XRequest('https://api.example.com/chat', {
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: 'hello, who are u?' }],
-      stream: true,
+      params: {
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: 'hello, who are u?' }],
+        stream: true,
+      },
       callbacks: {
         onSuccess: (messages) => {
           setStatus('success');

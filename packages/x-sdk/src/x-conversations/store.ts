@@ -34,7 +34,7 @@ export class ConversationStore {
 
   constructor(defaultConversations: ConversationData[]) {
     this.setConversations(defaultConversations);
-    this.storeKey = new Date().getTime().toString();
+    this.storeKey = Date.now().toString();
     conversationStoreHelper.set(this.storeKey, this);
   }
 
@@ -57,7 +57,7 @@ export class ConversationStore {
     return false;
   };
 
-  setConversation = (key: ConversationData['key'], conversation: Omit<ConversationData, 'key'>) => {
+  setConversation = (key: ConversationData['key'], conversation: ConversationData) => {
     const exist = this.getConversation(key);
     if (exist) {
       Object.assign(exist, conversation);

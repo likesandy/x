@@ -71,7 +71,7 @@ describe('useXConversations tests', () => {
     expect(ref.current?.conversations?.length).toEqual(2);
     expect(queryByText('Chat 2')).toBeTruthy();
 
-    ref.current?.setConversation('2', { label: 'Chat 3' });
+    ref.current?.setConversation('2', { key: '2', label: 'Chat 3' });
     await sleep(500);
     expect(queryByText('Chat 3')).toBeTruthy();
 

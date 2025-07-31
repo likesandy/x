@@ -53,8 +53,7 @@ export interface XRequestOptions<Input = AnyObject, Output = SSEOutput> {
   /**
    * @description Custom stream transformer, can use to adapt the stream data to the custom format
    */
-  transformStream?:
-    | XStreamOptions<Output>['transformStream']
+  transformStream?: XStreamOptions<Output>['transformStream']
     | ((baseURL: string, responseHeaders: Headers) => XStreamOptions<Output>['transformStream']);
 
   /**
@@ -173,6 +172,7 @@ export class XRequestClass<Input = AnyObject, Output = SSEOutput> {
         ...params,
         ...(extraParams || {}),
       }),
+      params,
       headers: Object.assign({}, globalOptions.headers || {}, headers),
       signal: this.abortController.signal,
       middlewares,

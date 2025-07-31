@@ -24,35 +24,72 @@ coverDark: https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*lQydTrtLz9YAAA
 
 ### XRequestFunction
 
-```ts
+```ts | pure
 type XRequestFunction<Input = Record<PropertyKey, any>, Output = Record<string, string>> = (
-  params: XRequestParams & Input,
-  callbacks: XRequestCallbacks<Output>,
-  transformStream?: XStreamOptions<Output>['transformStream'],
-) => Promise<void>;
+  baseURL: string,
+  options: XRequestOptions<Input, Output>,
+) => XRequestClass<Input, Output>;
 ```
+
+### XRequestFunction
+
+| 属性    | 描述         | 类型                             | 默认值 | 版本 |
+| ------- | ------------ | -------------------------------- | ------ | ---- |
+| baseURL | 请求接口地址 | string                           | -      | -    |
+| options |              | XRequestOptions\<Input, Output\> | -      | -    |
 
 ### XRequestOptions
 
 | 属性 | 描述 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| callbacks | 请求处理回调 | XRequestCallbacks\<Output\> | - | - |
-| fetch | 自定义 fetch 函数，用于发起请求 | XFetchOptions['fetch'] | - | - |
-| headers | 自定义请求头 | Record<string, string> | - | - |
-| middlewares | 请求处理中间件，可在请求发起前、请求响应后进行拦截处理 | XFetchMiddlewares | - | - |
+| callbacks | 请求回调处理集 | XRequestCallbacks\<Output\> | - | - |
+| params | 请求的参数 | Input | - | - |
+| headers | 额外的请求头配置 | Record\<string, string\> | - | - |
+| timeout | 请求超时配置，单位:ms | number | - | - |
+| streamTimeout | stream模式的数据超时配置，单位:ms | number | - | - |
+| fetch | 自定义fetch对象 | `typeof fetch` | - | - |
+| middlewares | 中间件，支持请求前和请求后处理 | XFetchMiddlewares | - | - |
+| transformStream | stream处理器 | XStreamOptions\<Output\>['transformStream'] \| ((baseURL: string, responseHeaders: Headers) => XStreamOptions\<Output\>['transformStream']) | - | - |
+| manual | 是否手动控制发出请求，为`true`时，需要手动调用`run`方法 | boolean | false | - |
 
-#### XRequestParams
+### XRequestCallbacks
 
-| 属性     | 描述                                   | 类型                       | 默认值 | 版本 |
-| -------- | -------------------------------------- | -------------------------- | ------ | ---- |
-| model    | 生成响应时使用的模型。                 | string                     | -      | -    |
-| messages | 消息对象数组，每个对象包含角色和内容。 | Record<PropertyKey, any>[] | -      | -    |
-| stream   | 指示是否使用流式响应。                 | boolean                    | false  | -    |
+| 属性      | 描述           | 类型                       | 默认值 | 版本 |
+| --------- | -------------- | -------------------------- | ------ | ---- |
+| onSuccess | 成功时的回调   | (chunks: Output[]) => void | -      | -    |
+| onError   | 错误处理的回调 | (error: Error) => void     | -      | -    |
+| onUpdate  | 消息更新的回调 | (chunk: Output) => void    | -      | -    |
 
-#### XRequestCallbacks
+### XRequestClass
 
-| 属性      | 描述           | 类型                         | 默认值 | 版本 |
-| --------- | -------------- | ---------------------------- | ------ | ---- |
-| onSuccess | 成功时的回调   | `(chunks: Output[]) => void` | -      | -    |
-| onError   | 错误处理的回调 | `(error: Error) => void`     | -      | -    |
-| onUpdate  | 消息更新的回调 | `(chunk: Output) => void`    | -      | -    |
+| 属性         | 描述                                | 类型                     | 默认值 | 版本 |
+| ------------ | ----------------------------------- | ------------------------ | ------ | ---- |
+| abort        | 取消请求                            | () => void               | -      | -    |
+| run          | 手动执行请求，当`manual=true`时有效 | (params?: Input) => void | -      | -    |
+| isRequesting | 当前是否在请求中                    | boolean                  | -      | -    |
+
+### setXRequestGlobalOptions
+
+```ts | pure
+type setXRequestGlobalOptions<Input, Output> = (
+  options: XRequestGlobalOptions<Input, Output>,
+) => void;
+```
+
+### XRequestGlobalOptions
+
+```ts | pure
+type XRequestGlobalOptions<Input, Output> = Pick<
+  XRequestOptions<Input, Output>,
+  'headers' | 'timeout' | 'streamTimeout' | 'middlewares' | 'fetch' | 'transformStream' | 'manual'
+>;
+```
+
+### XFetchMiddlewares
+
+```ts | pure
+interface XFetchMiddlewares {
+  onRequest?: (...ags: Parameters<typeof fetch>) => Promise<Parameters<typeof fetch>>;
+  onResponse?: (response: Response) => Promise<Response>;
+}
+```

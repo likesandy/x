@@ -82,7 +82,7 @@ export default () => {
       <Flex gap="small">
         <Button onClick={onAdd}>添加会话</Button>
         <Button onClick={onUpdate}>更新会话</Button>
-        <Button onClick={onReset}>重设会话</Button>
+        <Button onClick={onReset}>重设列表</Button>
       </Flex>
       <Paragraph>
         当前会话数据：

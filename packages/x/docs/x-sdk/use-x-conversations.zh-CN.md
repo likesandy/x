@@ -22,14 +22,32 @@ coverDark: https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*lQydTrtLz9YAAA
 
 ## API
 
+### useXConversations
+
 ```tsx | pure
 type useXConversations = (config: XConversationConfig) => {
   conversations: ConversationData[];
-  add: (conversation: ConversationData) => boolean;
-  remove: (key: string) => boolean;
-  set: (key: string, conversation: Omit<ConversationData, 'key'>) => boolean;
-  get: (key: string) => ConversationData;
+  addConversation: (conversation: ConversationData) => boolean;
+  removeConversation: (key: string) => boolean;
+  setConversation: (key: string, conversation: ConversationData) => boolean;
+  getConversation: (key: string) => ConversationData;
+  setConversations: (conversations: ConversationData[]) => boolean;
 };
 ```
 
-### useXConversations
+### XConversationConfig
+
+```tsx | pure
+interface XConversationConfig {
+  defaultConversations?: ConversationData[];
+}
+```
+
+### ConversationData
+
+```tsx | pure
+interface ConversationData extends AnyObject {
+  key: string;
+  label?: string;
+}
+```
