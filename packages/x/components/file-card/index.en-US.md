@@ -22,6 +22,7 @@ Used to display files during conversations or input.
 <code src="./demo/mask.tsx">Mask</code>
 <code src="./demo/icon.tsx">Icon</code>
 <code src="./demo/list.tsx">List</code>
+<code src="./demo/overflow.tsx">Overflow</code>
 
 ## API
 
@@ -61,9 +62,11 @@ type PresetIcons =
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | items | File lists | FileCardProps[] | - | - |
-| size | Card size | 'small' \| 'default' | - | - |
+| size | Card size | 'small' \| 'default' | default | - |
 | removable | Can be removed | boolean \| ((item: FileCardProps) => boolean) | false | - |
 | onRemove | Callback when remove | (item: FileCardProps, list?: FileCardProps[]) => void | - | - |
+| extension | Show extension | React.ReactNode | - | - |
+| overflow  | Style when overflow | 'scrollX' \| 'scrollY' \| 'wrap' | wrap | - |
 
 ## Semantic DOM
 

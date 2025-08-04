@@ -22,7 +22,6 @@ The Attachments component is used in scenarios where a set of attachment informa
 <code src="./demo/placeholder.tsx">Placeholder</code>
 <code src="./demo/overflow.tsx">Overflow</code>
 <code src="./demo/with-sender.tsx">Combination</code>
-<code src="./demo/files.tsx">File Card</code>
 
 ## API
 
@@ -57,17 +56,6 @@ interface PlaceholderType {
 | ------------- | ---------------------- | -------------------- | ------- |
 | nativeElement | Get the native node    | HTMLElement          | -       |
 | upload        | Manually upload a file | (file: File) => void | -       |
-
-### Attachments.FileCard Props
-
-| Property | Description | Type | Default | Version |
-| --- | --- | --- | --- | --- |
-| prefixCls | The prefix of the style class name | string | - | - |
-| className | Style class name | string | - | - |
-| style | Style Object | React.CSSProperties | - | - |
-| item | Attachment, same as Upload `UploadFile` | Attachment | - | - |
-| onRemove | A callback function, will be executed when removing file button is clicked, remove event will be prevented when the return value is false or a Promise which resolve(false) or reject | (item: Attachment) => boolean \| Promise | - | - |
-| imageProps | Image config, same as [Image](https://ant.design/components/image) | ImageProps | - | - |
 
 ## Semantic DOM
 

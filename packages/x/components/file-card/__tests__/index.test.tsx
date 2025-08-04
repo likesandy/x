@@ -6,9 +6,9 @@ import { fireEvent, render, waitFakeTimer } from '../../../tests/utils';
 import FileCard from '../index';
 
 describe('FileCard Component', () => {
-  mountTest(() => <FileCard />);
+  mountTest(() => <FileCard name="test-file.txt" />);
 
-  rtlTest(() => <FileCard />);
+  rtlTest(() => <FileCard name="test-file.txt" />);
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -138,9 +138,87 @@ describe('FileCard Component', () => {
         removable
       />,
     );
-    expect(container.querySelectorAll('.ant-file-card').length).toBe(2);
+    expect(container.querySelectorAll('.ant-file-card-list-item')).toHaveLength(2);
     fireEvent.click(container.querySelector('.ant-file-card-list-remove')!);
     await waitFakeTimer();
-    expect(container.querySelectorAll('.ant-file-card').length).toBe(1);
+    expect(container.querySelectorAll('.ant-file-card-list-motion-leave')).toHaveLength(1);
+  });
+
+  it('overflow: scrollX', () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+        overflow='scrollX'
+      />,
+    );
+
+    expect(container.querySelector('.ant-file-card-list-overflow-scrollX')).toBeTruthy();
+  });
+
+  it('FileCard list support overflow: scrollY', () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+        overflow='scrollY'
+      />,
+    );
+
+    expect(container.querySelector('.ant-file-card-list-overflow-scrollY')).toBeTruthy();
+  });
+
+  it('FileCard list support overflow: scrollY', () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+        overflow='scrollY'
+      />,
+    );
+
+    expect(container.querySelector('.ant-file-card-list-overflow-scrollY')).toBeTruthy();
+  });
+
+  it('FileCard list support extension', () => {
+    const { container } = render(
+      <FileCard.List
+        items={[{
+          name: 'excel-file.xlsx',
+          size: 1024,
+        },
+        {
+          name: 'word-file.docx',
+          size: 1024,
+        }]}
+        removable
+        extension={
+          <div className="test-extension">test</div>
+        }
+      />,
+    );
+
+    expect(container.querySelector('.test-extension')).toBeTruthy();
   });
 });

@@ -1,23 +1,29 @@
 import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { FileCard } from '@ant-design/x';
-import { Modal } from 'antd';
 import React from 'react';
 
 const App = () => {
+  const onDownload = () => {
+    const blob = new Blob(['123'], { type: 'text/plain' });
+    const a = document.createElement('a');
+    const href = URL.createObjectURL(blob);
+    a.href = href;
+    a.download = 'txt-file.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(href);
+  };
+
   return (
     <>
       <FileCard
-        name="PDF文件名称.PDF"
+        name="txt-file.txt"
         size={1024}
         mask={
           <VerticalAlignBottomOutlined
             style={{ fontSize: 20 }}
-            onClick={() => {
-              Modal.info({
-                title: 'Modal',
-                content: 'Click mask',
-              });
-            }}
+            onClick={() => onDownload()}
           />
         }
       />

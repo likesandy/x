@@ -1,4 +1,4 @@
-import { JavaOutlined } from '@ant-design/icons';
+import { AndroidOutlined } from '@ant-design/icons';
 import { FileCard } from '@ant-design/x';
 import { Flex } from 'antd';
 import React from 'react';
@@ -8,8 +8,8 @@ const App = () => {
     <Flex vertical gap="middle">
       <FileCard icon={'pdf'} name="txt-file.txt" size={1024} />
       <FileCard
-        icon={<JavaOutlined style={{ fontSize: 36, color: '#1677ff' }} />}
-        name="java-file.java"
+        icon={<AndroidOutlined style={{ fontSize: 36, color: '#22b35e' }} />}
+        name="android-file.apk"
         size={1024}
       />
     </Flex>

@@ -48,7 +48,7 @@ describe('attachments', () => {
     onChange.mockClear();
 
     // Remove file
-    fireEvent.click(container.querySelector('.ant-attachment-list-card-remove')!);
+    fireEvent.click(container.querySelector('.ant-file-card-list-remove')!);
     await waitFakeTimer();
     expect(onChange.mock.calls[0][0].fileList).toHaveLength(0);
   });
@@ -71,9 +71,9 @@ describe('attachments', () => {
     onChange.mockClear();
 
     // Remove file
-    fireEvent.click(container.querySelector('.ant-attachment-list-card-remove')!);
+    fireEvent.click(container.querySelector('.ant-file-card-list-remove')!);
     await waitFakeTimer();
-    expect(container.querySelectorAll('.ant-attachment-list-card')).toHaveLength(1);
+    expect(container.querySelectorAll('.ant-file-card-list-item')).toHaveLength(1);
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -85,7 +85,7 @@ describe('attachments', () => {
       }),
     );
 
-    expect(container.querySelector('.ant-attachment-list-overflow-scrollX')).toBeTruthy();
+    expect(container.querySelector('.ant-file-card-list-overflow-scrollX')).toBeTruthy();
   });
 
   it('overflow: scrollY', () => {
@@ -96,6 +96,6 @@ describe('attachments', () => {
       }),
     );
 
-    expect(container.querySelector('.ant-attachment-list-overflow-scrollY')).toBeTruthy();
+    expect(container.querySelector('.ant-file-card-list-overflow-scrollY')).toBeTruthy();
   });
 });

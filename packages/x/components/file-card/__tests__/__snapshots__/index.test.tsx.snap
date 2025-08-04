@@ -97,10 +97,14 @@ exports[`FileCard Component rtl render component should be rendered correctly in
       >
         <span
           class="ant-file-card-file-name-prefix"
-        />
+        >
+          test-file
+        </span>
         <span
           class="ant-file-card-file-name-suffix"
-        />
+        >
+          .txt
+        </span>
       </div>
     </div>
   </div>

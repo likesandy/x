@@ -21,6 +21,7 @@ description: 用卡片的形式展示文件。
 <code src="./demo/mask.tsx">使用遮罩</code>
 <code src="./demo/icon.tsx">自定义图标</code>
 <code src="./demo/list.tsx">文件列表</code>
+<code src="./demo/overflow.tsx">超出样式</code>
 
 ## API
 
@@ -58,11 +59,13 @@ type PresetIcons =
 ### FileCardListProps
 
 | 属性      | 说明       | 类型                                                  | 默认值 | 版本 |
-| --------- | ---------- | ----------------------------------------------------- | ------ | ---- |
+| --------- | ---------- | --------------------------------------------------- | ------ | ---- |
 | items     | 文件列表   | FileCardProps[]                                       | -      | -    |
-| size      | 卡片大小   | 'small' \| 'default'                                  | -      | -    |
+| size      | 卡片大小   | 'small' \| 'default'                                  | default |-    |
 | removable | 是否可删除 | boolean \| ((item: FileCardProps) => boolean)         | false  | -    |
 | onRemove  | 删除事件   | (item: FileCardProps, list?: FileCardProps[]) => void | -      | -    |
+| extension | 扩展      | React.ReactNode                                       | -      | -    |
+| overflow  | 超出展示   | 'scrollX' \| 'scrollY' \| 'wrap'                      | wrap   | -    |
 
 ## Semantic DOM
 

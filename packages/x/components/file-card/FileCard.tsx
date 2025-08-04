@@ -7,6 +7,9 @@ import {
   FileTextFilled,
   FileWordFilled,
   FileZipFilled,
+  JavaOutlined,
+  JavaScriptOutlined,
+  PythonOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
 import React, { useMemo } from 'react';
@@ -32,7 +35,10 @@ export type PresetIcons =
   | 'word'
   | 'zip'
   | 'video'
-  | 'audio';
+  | 'audio'
+  | 'java'
+  | 'javascript'
+  | 'python';
 
 type FileExtendsProps =
   | ImageProps
@@ -46,14 +52,14 @@ export type FileCardProps = FileExtendsProps & {
   className?: string;
   classNames?: Partial<Record<SemanticType, string>>;
   rootClassName?: string;
-
-  name?: string;
+  key?: React.Key;
+  name: string;
   size?: number | string;
   description?: React.ReactNode;
   src?: string;
   mask?: React.ReactNode;
   icon?: React.ReactNode | PresetIcons;
-  type?: 'file' | 'image' | 'audio' | 'video';
+  type?: 'file' | 'image' | 'audio' | 'video' | string;
   onClick?: () => void;
 }
 
@@ -117,10 +123,28 @@ const PRESET_FILE_ICONS: {
   },
   {
     icon: <AudioIcon />,
-    color: '#8c8c8c',
+    color: '#ff6e31',
     ext: AUDIO_EXT,
     key: 'audio',
   },
+  {
+    icon: <JavaOutlined />,
+    color: '#1677ff',
+    ext: ['java'],
+    key: 'java',
+  },
+  {
+    icon: <JavaScriptOutlined />,
+    color: '#fab714',
+    ext: ['js'],
+    key: 'javascript',
+  },
+  {
+    icon: <PythonOutlined />,
+    color: '#fab714',
+    ext: ['py'],
+    key: 'python',
+  }
 ];
 
 const DEFAULT_ICON = {
@@ -212,38 +236,38 @@ const FileCard: React.FC<FileCardProps> = (props) => {
     return 'file';
   }, [nameSuffix, customType]);
 
-  const ContentNode = () => {
-    if (fileType === 'image') {
-      return (
-        <Image
-          rootClassName={`${prefixCls}-image`}
-          alt={name}
-          src={src}
-          {...(restProps as ImageProps)}
-        />
-      );
-    }
-    if (fileType === 'video') {
-      return (
-        <video
-          src={src}
-          controls
-          className={`${prefixCls}-video`}
-          {...(restProps as React.JSX.IntrinsicElements['video'])}
-        />
-      );
-    }
-    if (fileType === 'audio') {
-      return (
-        <audio
-          src={src}
-          controls
-          className={`${prefixCls}-audio`}
-          {...(restProps as React.JSX.IntrinsicElements['audio'])}
-        />
-      );
-    }
-    return (
+  let ContentNode: React.ReactNode = null;
+  if (fileType === 'image') {
+    const preview = mask ? { mask } : undefined;
+    ContentNode = (
+      <Image
+        rootClassName={classnames(`${prefixCls}-image`, classNames.file)}
+        alt={name}
+        src={src}
+        preview={preview}
+        {...(restProps as ImageProps)}
+      />
+    );
+  } else if (fileType === 'video') {
+    ContentNode = (
+      <video
+        src={src}
+        controls
+        className={classnames(`${prefixCls}-video`, classNames.file)}
+        {...(restProps as React.JSX.IntrinsicElements['video'])}
+      />
+    );
+  } else if (fileType === 'audio') {
+    ContentNode = (
+      <audio
+        src={src}
+        controls
+        className={classnames(`${prefixCls}-audio`, classNames.file)}
+        {...(restProps as React.JSX.IntrinsicElements['audio'])}
+      />
+    );
+  } else {
+    ContentNode = (
       <File
         prefixCls={prefixCls}
         name={namePrefix}
@@ -258,7 +282,7 @@ const FileCard: React.FC<FileCardProps> = (props) => {
         styles={styles}
       />
     );
-  };
+  }
 
   return (
     <div
@@ -270,7 +294,7 @@ const FileCard: React.FC<FileCardProps> = (props) => {
         ...styles.root,
       }}
     >
-      <ContentNode />
+      {ContentNode}
     </div>
   );
 };

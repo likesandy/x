@@ -15,16 +15,18 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
     paddingXXS,
     colorFillTertiary,
     marginSM,
-    marginXS,
     colorTextDescription,
-    colorTextLabel,
     fontSize,
     fontSizeSM,
     colorTextBase,
     motionDurationSlow,
     colorTextLightSolid,
+    lineHeightLG,
+    marginXXS,
+    borderRadius,
+    fontSizeHeading1,
+    calc,
   } = token;
-  console.log('token', token);
 
   return {
     [componentCls]: {
@@ -32,18 +34,16 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
 
       [`${componentCls}-file`]: {
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         padding: `${paddingSM} ${padding}`,
         cursor: 'pointer',
         backgroundColor: colorFillTertiary,
-        borderRadius: 12,
+        borderRadius: calc(borderRadius).mul(2).equal(),
         position: 'relative',
         overflow: 'hidden',
 
         [`${componentCls}-file-icon`]: {
-          width: 36,
-          height: 36,
-          fontSize: 36,
+          fontSize: calc(fontSizeHeading1).sub(2).equal(),
           marginInlineEnd: marginSM,
           display: 'flex',
           alignItems: 'center',
@@ -53,30 +53,32 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
         [`${componentCls}-file-content`]: {
           flex: 1,
           maxWidth: 275,
+        },
 
-          [`${componentCls}-file-name`]: {
-            fontSize: fontSize,
-            color: colorTextBase,
-            display: 'flex',
-            maxWidth: '100%',
-          },
+        [`${componentCls}-file-name`]: {
+          fontSize: fontSize,
+          color: colorTextBase,
+          display: 'flex',
+          maxWidth: '100%',
+        },
 
-          [`${componentCls}-file-name-prefix`]: {
-            flex: '0 1 auto',
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          },
+        [`${componentCls}-file-name-prefix`]: {
+          flex: '0 1 auto',
+          minWidth: 0,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        },
 
-          [`${componentCls}-file-name-suffix`]: {
-            flex: 'none',
-          },
+        [`${componentCls}-file-name-suffix`]: {
+          flex: 'none',
+        },
 
-          [`${componentCls}-file-description`]: {
-            fontSize: fontSizeSM,
-            color: colorTextDescription,
-          },
+        [`${componentCls}-file-description`]: {
+          fontSize: fontSizeSM,
+          color: colorTextDescription,
+          lineHeight: lineHeightLG,
+          marginBottom: marginXXS,
         },
 
         [`${componentCls}-file-mask`]: {
@@ -107,88 +109,18 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
       [`${componentCls}-image`]: {
         width: 200,
         height: 200,
-        borderRadius: 12,
+        borderRadius: calc(borderRadius).mul(2).equal(),
         overflow: 'hidden',
       },
 
       [`${componentCls}-video`]: {
         width: 548,
         height: 308,
-        borderRadius: 12,
+        borderRadius: calc(borderRadius).mul(2).equal(),
       },
 
       [`${componentCls}-audio`]: {
         width: 300,
-      },
-
-      '&-list': {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        width: '100%',
-        gap: 8,
-
-        [`${componentCls}-list-item`]: {
-          width: '32%',
-          display: 'flex',
-          position: 'relative',
-
-          '&:hover': {
-            [`${componentCls}-list-remove`]: {
-              opacity: 1,
-            },
-          },
-        },
-
-        [componentCls]: {
-          flex: 1,
-          display: 'block',
-        },
-
-        [`${componentCls}-list-remove`]: {
-          position: 'absolute',
-          top: 0,
-          insetInlineEnd: 0,
-          fontSize: 16,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 16,
-          height: 16,
-          color: colorTextLabel,
-          opacity: 0,
-          cursor: 'pointer',
-        },
-      },
-
-      '&-list-small-size': {
-        [`${componentCls}-file`]: {
-          borderRadius: 8,
-
-          [`${componentCls}-file-icon`]: {
-            width: 20,
-            height: 20,
-            fontSize: 20,
-            marginInlineEnd: marginXS,
-          },
-
-          [`${componentCls}-file-description`]: {
-            display: 'none',
-          },
-        },
-
-        [`${componentCls}-list-remove`]: {
-          fontSize: 14,
-          width: 14,
-          height: 14,
-        },
-
-        [`${componentCls}-image`]: {
-          width: 100,
-          height: 100,
-        },
       },
 
       [`&${componentCls}-rtl`]: {
@@ -198,13 +130,248 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
   };
 };
 
+const genFileCardListStyle: GenerateStyle<FileCardToken> = (token) => {
+  const {
+    componentCls,
+    padding,
+    paddingSM,
+    controlHeightLG,
+    colorFillTertiary,
+    marginXS,
+    colorTextLabel,
+    fontSize,
+    fontSizeLG,
+    borderRadius,
+    borderRadiusLG,
+    fontSizeHeading4,
+    motionDurationSlow,
+    calc,
+  } = token;
+  
+  return {
+    [`${componentCls}-list`]: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: marginXS,
+      paddingBlock: paddingSM,
+      paddingInline: padding,
+
+      // Scrollbar none
+      scrollbarWidth: 'none',
+      '-ms-overflow-style': 'none',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+
+      '&-wrapper': {
+        position: 'relative',
+      },
+
+      // list item
+      [`${componentCls}-list-item`]: {
+        display: 'flex',
+        position: 'relative',
+
+        '&:hover': {
+          [`${componentCls}-list-remove`]: {
+            opacity: 1,
+          },
+        },
+      },
+
+      [`${componentCls}-list-motion`]: {
+        transition: `opacity ${motionDurationSlow}`,
+
+        [`${componentCls}-file, ${componentCls}-image, ${componentCls}-video, ${componentCls}-audio`]: {
+          transition: ['width', 'padding']
+            .map((prop) => `${prop} ${motionDurationSlow}`)
+            .join(','),
+        },
+
+        '&-leave-active': {
+          opacity: 0,
+          marginInlineEnd: calc(marginXS).mul(-1).equal(),
+
+          [`${componentCls}-file, ${componentCls}-image, ${componentCls}-video, ${componentCls}-audio`]: {
+            width: 0,
+            paddingInline: 0,
+          },
+        },
+      },
+
+      [`${componentCls}-file`]: {
+        width: 236,
+
+        [`${componentCls}-file-content`]: {
+          maxWidth: 156,
+        },
+      },
+
+      [`${componentCls}-image`]: {
+        width: 68,
+        height: 68,
+        borderRadius: borderRadius,
+        display: 'flex',
+      },
+
+      [`${componentCls}-list-remove`]: {
+        position: 'absolute',
+        top: 0,
+        insetInlineEnd: 0,
+        transform: 'translate(50%, -50%)',
+        fontSize: fontSizeLG,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: colorTextLabel,
+        opacity: 0,
+        cursor: 'pointer',
+        backgroundColor: colorFillTertiary,
+      },
+
+      // small size
+      '&-small-size': {
+        [`${componentCls}-file`]: {
+          borderRadius: borderRadiusLG,
+          padding: `0 ${paddingSM}`,
+          height: controlHeightLG,
+
+          [`${componentCls}-file-icon`]: {
+            fontSize: fontSizeHeading4,
+            marginInlineEnd: marginXS,
+          },
+
+          [`${componentCls}-file-description`]: {
+            display: 'none',
+          },
+        },
+
+        [`${componentCls}-list-remove`]: {
+          fontSize: fontSize,
+        },
+      },
+
+      // Scroll
+      '&-overflow-scrollX, &-overflow-scrollY': {
+        '&:before, &:after': {
+          content: '""',
+          position: 'absolute',
+          opacity: 0,
+          transition: `opacity ${motionDurationSlow}`,
+          zIndex: 1,
+        },
+      },
+      '&-overflow-ping-start:before': {
+        opacity: 1,
+      },
+      '&-overflow-ping-end:after': {
+        opacity: 1,
+      },
+
+      '&-overflow-scrollX': {
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        flexWrap: 'nowrap',
+
+        '&:before, &:after': {
+          insetBlock: 0,
+          width: 8,
+        },
+        '&:before': {
+          insetInlineStart: 0,
+          background: `linear-gradient(to right, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+        },
+        '&:after': {
+          insetInlineEnd: 0,
+          background: `linear-gradient(to left, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+        },
+
+        '&:dir(rtl)': {
+          '&:before': {
+            background: `linear-gradient(to left, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+          },
+          '&:after': {
+            background: `linear-gradient(to right, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+          },
+        },
+      },
+
+      '&-overflow-scrollY': {
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        maxHeight: 68,
+
+        '&:before, &:after': {
+          insetInline: 0,
+          height: 8,
+        },
+
+        '&:before': {
+          insetBlockStart: 0,
+          background: `linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+        },
+        '&:after': {
+          insetBlockEnd: 0,
+          background: `linear-gradient(to top, rgba(0,0,0,0.06), rgba(0,0,0,0));`,
+        },
+      },
+
+      // prev/next btn
+      '&-prev-btn, &-next-btn': {
+        position: 'absolute',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        boxShadow: token.boxShadowTertiary,
+        opacity: 0,
+        pointerEvents: 'none',
+      },
+      '&-prev-btn': {
+        left: {
+          _skip_check_: true,
+          value: token.padding,
+        },
+      },
+      '&-next-btn': {
+        right: {
+          _skip_check_: true,
+          value: token.padding,
+        },
+      },
+
+      '&:dir(ltr)': {
+        [`&${componentCls}-list-overflow-ping-start ${componentCls}-list-prev-btn`]: {
+          opacity: 1,
+          pointerEvents: 'auto',
+        },
+        [`&${componentCls}-list-overflow-ping-end ${componentCls}-list-next-btn`]: {
+          opacity: 1,
+          pointerEvents: 'auto',
+        },
+      },
+      '&:dir(rtl)': {
+        [`&${componentCls}-list-overflow-ping-end ${componentCls}-list-prev-btn`]: {
+          opacity: 1,
+          pointerEvents: 'auto',
+        },
+        [`&${componentCls}-list-overflow-ping-start ${componentCls}-list-next-btn`]: {
+          opacity: 1,
+          pointerEvents: 'auto',
+        },
+      },
+    },
+  }
+}
+
 export const prepareComponentToken: GetDefaultToken<'FileCard'> = () => ({});
 
 export default genStyleHooks<'FileCard'>(
   'FileCard',
   (token) => {
     const FileCardToken = mergeToken<FileCardToken>(token, {});
-    return [genFileCardStyle(FileCardToken)];
+    return [genFileCardStyle(FileCardToken), genFileCardListStyle(FileCardToken)];
   },
   prepareComponentToken,
 );

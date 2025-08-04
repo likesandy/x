@@ -1,5 +1,5 @@
 import { CoffeeOutlined, FireOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
-import { Attachments, Bubble, Prompts } from '@ant-design/x';
+import { Bubble, Prompts, FileCard } from '@ant-design/x';
 import { Button, Flex, GetProp, Image, Typography } from 'antd';
 import React, { useState } from 'react';
 
@@ -66,17 +66,14 @@ const App = () => {
       role: 'file',
       content: [
         {
-          uid: '1',
+          key: '1',
           name: 'excel-file.xlsx',
           size: 111111,
-          description: 'Checking the data',
         },
         {
-          uid: '2',
+          key: '2',
           name: 'word-file.docx',
           size: 222222,
-          status: 'uploading',
-          percent: 23,
         },
       ],
     },
@@ -129,7 +126,7 @@ const App = () => {
       messageRender: (items) => (
         <Flex vertical gap="middle">
           {(items as any[]).map((item) => (
-            <Attachments.FileCard key={item.uid} item={item} />
+            <FileCard key={item.uid} {...item} />
           ))}
         </Flex>
       ),

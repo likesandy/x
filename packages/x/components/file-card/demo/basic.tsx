@@ -12,6 +12,9 @@ const App = () => {
       <FileCard name="zip-file.zip" size={1024} />
       <FileCard name="txt-file.txt" size={1024} />
       <FileCard name="markdown-file.md" size={1024} />
+      <FileCard name="java-file.java" size={1024} />
+      <FileCard name="javascript-file.js" size={1024} />
+      <FileCard name="python-file.py" size={1024} />
     </Flex>
   );
 };
