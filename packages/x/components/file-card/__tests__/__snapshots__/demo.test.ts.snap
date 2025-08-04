@@ -956,14 +956,7 @@ exports[`renders components/file-card/demo/list.tsx correctly 1`] = `
     class="ant-file-card-list-wrapper"
   >
     <div
-      class="ant-file-card-list css-var-«R0» ant-file-card-list-small-size"
-    />
-  </div>
-  <div
-    class="ant-file-card-list-wrapper"
-  >
-    <div
-      class="ant-file-card-list css-var-«R0»"
+      class="ant-file-card-list css-var-«R0» ant-file-card-list-small"
     />
   </div>
 </div>
