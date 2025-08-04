@@ -3,16 +3,16 @@
 exports[`renders components/suggestion/demo/basic.tsx extend context correctly 1`] = `
 Array [
   <div
-    class="ant-suggestion ant-suggestion-wrapper css-var-«r8»"
+    class="ant-suggestion ant-suggestion-wrapper css-var-«r9»"
   >
     <div
-      class="ant-sender css-var-«r8»"
+      class="ant-sender css-var-«r9»"
     >
       <div
         class="ant-sender-content"
       >
         <textarea
-          class="ant-input ant-input-borderless css-var-«r8» ant-input-css-var ant-sender-input"
+          class="ant-input ant-input-borderless css-var-«r9» ant-input-css-var ant-sender-input"
           placeholder="输入 / 获取建议"
           style="overflow-y: hidden; resize: none;"
         />
@@ -20,10 +20,11 @@ Array [
           class="ant-sender-actions-list"
         >
           <div
-            class="ant-sender-actions-list-presets ant-flex css-var-«r8»"
+            class="ant-sender-actions-list-presets ant-flex css-var-«r9»"
           >
             <button
-              class="ant-btn css-var-«r8» ant-btn-circle ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-sender-actions-btn ant-sender-actions-btn-disabled"
+              class="ant-btn css-var-«r9» ant-btn-circle ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-sender-actions-btn ant-sender-actions-btn-disabled"
+              disabled=""
               type="button"
             >
               <span
@@ -56,7 +57,7 @@ Array [
     </div>
   </div>,
   <div
-    class="ant-select-dropdown ant-slide-up-appear ant-slide-up-appear-prepare ant-slide-up ant-cascader-dropdown ant-suggestion css-var-«r8» ant-select-css-var ant-cascader-css-var css-var-«r8» ant-select-dropdown-placement-topLeft"
+    class="ant-select-dropdown ant-slide-up-appear ant-slide-up-appear-prepare ant-slide-up ant-cascader-dropdown ant-suggestion css-var-«r9» ant-select-css-var ant-cascader-css-var css-var-«r9» ant-select-dropdown-placement-topLeft"
     style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; right: auto; bottom: auto; box-sizing: border-box; min-width: auto;"
   >
     <div>
@@ -78,7 +79,7 @@ Array [
               class="ant-cascader-menu-item-content"
             >
               <div
-                class="ant-suggestion-item ant-flex css-var-«r8»"
+                class="ant-suggestion-item ant-flex css-var-«r9»"
               >
                 Write a report
               </div>
@@ -95,7 +96,7 @@ Array [
               class="ant-cascader-menu-item-content"
             >
               <div
-                class="ant-suggestion-item ant-flex css-var-«r8»"
+                class="ant-suggestion-item ant-flex css-var-«r9»"
               >
                 Draw a picture
               </div>
@@ -112,7 +113,7 @@ Array [
               class="ant-cascader-menu-item-content"
             >
               <div
-                class="ant-suggestion-item ant-flex css-var-«r8»"
+                class="ant-suggestion-item ant-flex css-var-«r9»"
               >
                 <div
                   class="ant-suggestion-item-icon"
@@ -198,6 +199,7 @@ Array [
           >
             <button
               class="ant-btn css-var-«r5» ant-btn-circle ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-sender-actions-btn ant-sender-actions-btn-disabled"
+              disabled=""
               type="button"
             >
               <span

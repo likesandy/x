@@ -95,6 +95,7 @@ exports[`Sender Component rtl render component should be rendered correctly in R
       >
         <button
           class="ant-btn css-var-root ant-btn-circle ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-icon-only ant-btn-rtl ant-sender-actions-btn ant-sender-actions-btn-disabled"
+          disabled=""
           type="button"
         >
           <span

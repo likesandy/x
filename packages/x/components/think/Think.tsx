@@ -3,7 +3,9 @@ import classnames from 'classnames';
 import type { CSSMotionProps } from 'rc-motion';
 import CSSMotion from 'rc-motion';
 import useMergedState from 'rc-util/lib/hooks/useMergedState';
+import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
+import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import initCollapseMotion from '../_util/motion';
 import { useXProviderContext } from '../x-provider';
@@ -25,7 +27,7 @@ const StatusIcon = ({
   return icon || <ThinkIcon />;
 };
 
-export interface ThinkProps {
+export interface ThinkProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   prefixCls?: string;
   style?: React.CSSProperties;
   styles?: Partial<Record<SemanticType, React.CSSProperties>>;
@@ -40,7 +42,11 @@ export interface ThinkProps {
   onExpand?: (expand: boolean) => void;
 }
 
-const Think: React.FC<React.PropsWithChildren<ThinkProps>> = (props) => {
+type ThinkRef = {
+  nativeElement: HTMLElement;
+};
+
+const Think = React.forwardRef<ThinkRef, ThinkProps>((props, ref) => {
   const {
     prefixCls: customizePrefixCls,
     style,
@@ -55,19 +61,31 @@ const Think: React.FC<React.PropsWithChildren<ThinkProps>> = (props) => {
     defaultExpanded = true,
     expanded,
     onExpand,
+    ...restProps
   } = props;
+
+  // ============================ Prefix ============================
 
   const { direction, getPrefixCls } = useXProviderContext();
   const prefixCls = getPrefixCls('think', customizePrefixCls);
-  const contextConfig = useXComponentConfig('think');
-
-  const collapseMotion: CSSMotionProps = {
-    ...initCollapseMotion(),
-    motionAppear: false,
-    leavedClassName: `${prefixCls}-content-hidden`,
-  };
-
   const [hashId, cssVarCls] = useStyle(prefixCls);
+
+  // ======================= Component Config =======================
+
+  const contextConfig = useXComponentConfig('think');
+  const domProps = pickAttrs(restProps, {
+    attr: true,
+    aria: true,
+    data: true,
+  });
+
+  // ============================= Refs =============================
+  const thinkRef = React.useRef<HTMLDivElement>(null);
+  useProxyImperativeHandle(ref, () => {
+    return {
+      nativeElement: thinkRef.current!,
+    };
+  });
 
   const mergedCls = classnames(
     prefixCls,
@@ -82,13 +100,24 @@ const Think: React.FC<React.PropsWithChildren<ThinkProps>> = (props) => {
     },
   );
 
+  // ============================  Collapsible ============================
+
   const [isExpand, setIsExpand] = useMergedState(defaultExpanded, {
     value: expanded,
     onChange: onExpand,
   });
 
+  const collapseMotion: CSSMotionProps = {
+    ...initCollapseMotion(),
+    motionAppear: false,
+    leavedClassName: `${prefixCls}-content-hidden`,
+  };
+
+  // ============================ Render ============================
   return (
     <div
+      ref={thinkRef}
+      {...domProps}
       className={mergedCls}
       style={{
         ...contextConfig.style,
@@ -121,7 +150,7 @@ const Think: React.FC<React.PropsWithChildren<ThinkProps>> = (props) => {
       </CSSMotion>
     </div>
   );
-};
+});
 
 if (process.env.NODE_ENV !== 'production') {
   Think.displayName = 'Think';

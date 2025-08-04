@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
 import useCollapsible from '../_util/hooks/use-collapsible';
+import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import { useXProviderContext } from '../x-provider';
 import Item from './Item';
@@ -9,11 +10,11 @@ import type { ThoughtChainItem, ThoughtChainProps } from './interface';
 import ThoughtChainNode, { ThoughtChainContext } from './Node';
 import useStyle from './style';
 
-type CompoundedComponent = {
+type CompoundedComponent = typeof ForwardThoughtChain & {
   Item: typeof Item;
 };
 
-const ThoughtChain: React.FC<ThoughtChainProps> & CompoundedComponent = (props) => {
+const ForwardThoughtChain = React.forwardRef<any, ThoughtChainProps>((props, ref) => {
   const {
     prefixCls: customizePrefixCls,
     className,
@@ -37,11 +38,13 @@ const ThoughtChain: React.FC<ThoughtChainProps> & CompoundedComponent = (props) 
   });
 
   // ============================ Prefix ============================
+
   const { direction, getPrefixCls } = useXProviderContext();
 
   const prefixCls = getPrefixCls('thought-chain', customizePrefixCls);
 
   // ===================== Component Config =========================
+
   const contextConfig = useXComponentConfig('thoughtChain');
 
   // ============================ Style ============================
@@ -71,17 +74,29 @@ const ThoughtChain: React.FC<ThoughtChainProps> & CompoundedComponent = (props) 
     expandedKeys: customExpandedKeys,
     onExpand,
   };
+
   const [_, expandedKeys, onItemExpand, collapseMotion] = useCollapsible(
     collapsibleOptions,
     prefixCls,
     rootPrefixCls,
   );
 
+  // ============================= Refs =============================
+
+  const thoughtChainRef = React.useRef<HTMLDivElement>(null);
+
+  useProxyImperativeHandle(ref, () => {
+    return {
+      nativeElement: thoughtChainRef.current!,
+    };
+  });
+
   // ============================ Render ============================
   return (
     <div
-      {...domProps}
+      ref={thoughtChainRef}
       className={mergedCls}
+      {...domProps}
       style={{ ...contextConfig.style, ...styles.root, ...style }}
     >
       <ThoughtChainContext.Provider
@@ -117,12 +132,15 @@ const ThoughtChain: React.FC<ThoughtChainProps> & CompoundedComponent = (props) 
       </ThoughtChainContext.Provider>
     </div>
   );
-};
+});
+
+const ThoughtChain = ForwardThoughtChain as CompoundedComponent;
+
+ThoughtChain.Item = Item;
 
 if (process.env.NODE_ENV !== 'production') {
   ThoughtChain.displayName = 'ThoughtChain';
 }
 
-ThoughtChain.Item = Item;
 export type { ThoughtChainProps, ThoughtChainItem };
 export default ThoughtChain;

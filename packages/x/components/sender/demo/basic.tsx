@@ -38,9 +38,9 @@ const Demo: React.FC = () => {
           setLoading(false);
           message.error('Cancel sending!');
         }}
-        autoSize={{ minRows: 2, maxRows: 6 }}
+        autoSize={{ minRows: 4, maxRows: 6 }}
       />
-      <Sender value="Force as loading" loading readOnly />
+      <Sender value="Force as loading" loading readOnly autoSize={true} />
       <Sender disabled value="Set to disabled" />
     </Flex>
   );

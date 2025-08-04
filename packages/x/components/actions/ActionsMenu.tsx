@@ -48,8 +48,12 @@ const ActionsMenu: React.FC<ActionsItemProps> = (props) => {
   return (
     <Dropdown
       menu={menuProps}
-      overlayClassName={classnames(`${prefixCls}-sub-item`, classNames?.itemDropdown)}
-      overlayStyle={styles?.itemDropdown}
+      classNames={{
+        root: classnames(`${prefixCls}-sub-item`, classNames?.itemDropdown),
+      }}
+      styles={{
+        root: styles?.itemDropdown,
+      }}
       arrow
       trigger={[triggerSubMenuAction]}
       {...dropdownProps}

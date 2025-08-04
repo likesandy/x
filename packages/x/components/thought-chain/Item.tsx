@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
+import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import { useXProviderContext } from '../x-provider';
 import Status, { THOUGHT_CHAIN_ITEM_STATUS } from './Status';
 import useStyle from './style';
@@ -60,7 +61,10 @@ export interface ThoughtChainItemProp
   variant?: `${VARIANT}`;
 }
 
-const Item: React.FC<ThoughtChainItemProp> = (props) => {
+type ItemRef = {
+  nativeElement: HTMLElement;
+};
+const Item = React.forwardRef<ItemRef, ThoughtChainItemProp>((props, ref) => {
   // ============================ Info ============================
   const {
     key,
@@ -83,6 +87,14 @@ const Item: React.FC<ThoughtChainItemProp> = (props) => {
 
   const id = React.useId();
 
+  // ============================= Refs =============================
+  const itemRef = React.useRef<HTMLDivElement>(null);
+  useProxyImperativeHandle(ref, () => {
+    return {
+      nativeElement: itemRef.current!,
+    };
+  });
+
   // ============================ Prefix ============================
 
   const { getPrefixCls, direction } = useXProviderContext();
@@ -94,6 +106,7 @@ const Item: React.FC<ThoughtChainItemProp> = (props) => {
   // ============================ Render ============================
   return (
     <div
+      ref={itemRef}
       key={key || id}
       onClick={onClick}
       {...domProps}
@@ -111,6 +124,6 @@ const Item: React.FC<ThoughtChainItemProp> = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default Item;

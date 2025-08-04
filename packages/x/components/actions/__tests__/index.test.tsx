@@ -22,6 +22,12 @@ describe('Actions Component', () => {
     },
   ];
 
+  it('Actions supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<Actions ref={ref} items={items} />);
+    expect(ref.current).not.toBeNull();
+  });
+
   it('renders correctly', () => {
     const { getByText } = render(<Actions items={items} onClick={mockOnClick} />);
 

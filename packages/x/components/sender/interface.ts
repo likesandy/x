@@ -8,8 +8,9 @@ type TextareaProps = GetProps<typeof import('antd').Input.TextArea>;
 
 export type SubmitType = 'enter' | 'shiftEnter' | false;
 
-type SemanticType = 'root' | 'prefix' | 'input' | 'actions' | 'footer';
+type SemanticType = 'root' | 'prefix' | 'input' | 'suffix' | 'footer' | 'switch';
 
+export type insertPosition = 'start' | 'end' | 'cursor';
 export interface SenderComponents {
   input?: React.ComponentType<TextareaProps>;
 }
@@ -21,14 +22,13 @@ export type ActionsComponents = {
   SpeechButton: React.ComponentType<ButtonProps>;
 };
 
-export type ActionsRender = (
-  ori: React.ReactNode,
+export type BaseNode = React.ReactNode | false;
+export type NodeRender = (
+  oriNode: React.ReactNode,
   info: {
     components: ActionsComponents;
   },
-) => React.ReactNode;
-
-export type FooterRender = (info: { components: ActionsComponents }) => React.ReactNode;
+) => BaseNode;
 
 interface SlotConfigBaseType {
   type: 'text' | 'input' | 'select' | 'tag' | 'custom';
@@ -37,7 +37,7 @@ interface SlotConfigBaseType {
 
 interface SlotConfigTextType extends SlotConfigBaseType {
   type: 'text';
-  text?: string;
+  value: string;
   key?: string;
 }
 
@@ -90,6 +90,9 @@ export type SlotConfigType =
   | SlotConfigTagType
   | SlotConfigCustomType;
 
+export type EventType =
+  | React.FormEvent<HTMLTextAreaElement>
+  | React.ChangeEvent<HTMLTextAreaElement>;
 export interface SenderProps
   extends Pick<TextareaProps, 'placeholder' | 'onKeyUp' | 'onFocus' | 'onBlur'> {
   prefixCls?: string;
@@ -99,13 +102,9 @@ export interface SenderProps
   readOnly?: boolean;
   submitType?: SubmitType;
   disabled?: boolean;
-  slotConfig?: SlotConfigType[];
+  initialSlotConfig?: SlotConfigType[];
   onSubmit?: (message: string, slotConfig?: SlotConfigType[]) => void;
-  onChange?: (
-    value: string,
-    event?: React.FormEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLTextAreaElement>,
-    slotConfig?: SlotConfigType[],
-  ) => void;
+  onChange?: (value: string, event?: EventType, slotConfig?: SlotConfigType[]) => void;
   onCancel?: VoidFunction;
   onKeyDown?: React.KeyboardEventHandler<any>;
   onPaste?: React.ClipboardEventHandler<HTMLElement>;
@@ -116,12 +115,16 @@ export interface SenderProps
   rootClassName?: string;
   style?: React.CSSProperties;
   className?: string;
-  actions?: React.ReactNode | ActionsRender;
   allowSpeech?: AllowSpeech;
-  prefix?: React.ReactNode;
-  footer?: React.ReactNode | FooterRender;
-  header?: React.ReactNode;
+  prefix?: BaseNode | NodeRender;
+  footer?: BaseNode | NodeRender;
+  suffix?: BaseNode | NodeRender;
+  header?: BaseNode | NodeRender;
   autoSize?: boolean | { minRows?: number; maxRows?: number };
 }
 
-export type SenderRef = TextAreaRef | SlotTextAreaRef;
+export type SenderRef = Omit<TextAreaRef, 'nativeElement'> &
+  Omit<SlotTextAreaRef, 'nativeElement'> & {
+    inputElement: TextAreaRef['nativeElement'] | SlotTextAreaRef['nativeElement'];
+    nativeElement: HTMLDivElement;
+  };

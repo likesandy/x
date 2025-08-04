@@ -71,6 +71,12 @@ let cleanUp: () => void;
 
 describe('Conversations Component', () => {
   mountTest(() => <Conversations />);
+
+  it('Conversations supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<Conversations ref={ref} items={items} />);
+    expect(ref.current).not.toBeNull();
+  });
   beforeEach(() => {
     cleanUp = jest.spyOn(console, 'error').mockImplementation(() => {}).mockRestore;
   });
@@ -236,7 +242,7 @@ describe('Conversations Component', () => {
         />,
       );
       expect(console.error).toHaveBeenCalledWith(
-        'Warning: [antd: conversations] Same shortcutKey Alt,49',
+        'Warning: [antdx: conversations] Same shortcutKey Alt,49',
       );
     });
     it('shortcut keys of items width error config', async () => {

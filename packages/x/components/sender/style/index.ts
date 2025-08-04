@@ -5,6 +5,7 @@ import type { FullToken, GenerateStyle, GetDefaultToken } from '../../theme/cssi
 import { genStyleHooks } from '../../theme/genStyleUtils';
 import genSenderHeaderStyle from './header';
 import genSlotTextAreaStyle from './slot-textarea';
+import genSenderSwitchStyle from './switch';
 
 // biome-ignore lint/suspicious/noEmptyInterface: ComponentToken need to be empty by default
 export interface ComponentToken {
@@ -33,66 +34,51 @@ export interface ComponentToken {
    * @descEN Slot border hover color
    */
   colorBorderSlotHover: string;
+  /**
+   * @desc 开关选中背景颜色
+   * @descEN Switch checked background colo
+   */
+  switchCheckedBg: string;
+  /**
+   * @desc 开关选中悬浮态背景颜色
+   * @descEN Switch checked hover background color
+   */
+  switchCheckedHoverBg: string;
+
+  /**
+   * @desc 开关未选中悬浮态背景颜色
+   * @descEN Switch unchecked hover background color
+   */
+  switchUncheckedHoverBg: string;
+
+  /**
+   * @desc 输入框边框颜色
+   * @descEN Input border color
+   */
+  colorBorderInput: string;
 }
 
 export interface SenderToken extends FullToken<'Sender'> {
   SenderContentMaxWidth: number | string;
 }
 const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
-  const {
-    componentCls,
-    padding,
-    paddingSM,
-    paddingXS,
-    paddingXXS,
-    lineWidth,
-    lineWidthBold,
-    calc,
-  } = token;
+  const { componentCls, paddingSM, paddingXS, paddingXXS, lineWidth, calc } = token;
 
   return {
-    [componentCls]: {
+    [`${componentCls}:not(${componentCls}-switch):not(${componentCls}-header)`]: {
       position: 'relative',
       width: '100%',
       boxSizing: 'border-box',
       boxShadow: `${token.boxShadowTertiary}`,
-      transition: `background ${token.motionDurationSlow}`,
-
       // Border
       borderRadius: {
         _skip_check_: true,
         value: calc(token.borderRadius).mul(2).equal(),
       },
-      borderColor: token.colorBorder,
-      borderWidth: 0,
+
+      borderColor: token.colorBorderInput,
+      borderWidth: lineWidth,
       borderStyle: 'solid',
-
-      // Border
-      '&:after': {
-        content: '""',
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        transition: `border-color ${token.motionDurationSlow}`,
-
-        borderRadius: {
-          _skip_check_: true,
-          value: 'inherit',
-        },
-        borderStyle: 'inherit',
-        borderColor: 'inherit',
-        borderWidth: lineWidth,
-      },
-
-      // Focus
-      '&:focus-within': {
-        boxShadow: `${token.boxShadowSecondary}`,
-        borderColor: token.colorPrimary,
-
-        '&:after': {
-          borderWidth: lineWidthBold,
-        },
-      },
 
       '&-disabled': {
         background: token.colorBgContainerDisabled,
@@ -108,9 +94,8 @@ const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
         display: 'flex',
         gap: paddingXS,
         width: '100%',
-
         paddingBlock: paddingSM,
-        paddingInlineStart: padding,
+        paddingInlineStart: paddingSM,
         paddingInlineEnd: paddingSM,
         boxSizing: 'border-box',
         alignItems: 'flex-end',
@@ -127,6 +112,7 @@ const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
         flex: 'auto',
         alignSelf: 'center',
         minHeight: 'auto',
+        caretColor: token.colorPrimary,
       },
 
       // ============================ Actions ============================
@@ -141,7 +127,9 @@ const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
 
       [`${componentCls}-actions-btn`]: {
         '&-disabled': {
+          background: token.colorPrimary,
           opacity: 0.45,
+          color: token.colorTextLightSolid,
         },
 
         '&-loading-button': {
@@ -163,7 +151,7 @@ const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
 
       // ============================ Footer =============================
       [`${componentCls}-footer`]: {
-        paddingInlineStart: padding,
+        paddingInlineStart: paddingSM,
         paddingInlineEnd: paddingSM,
         paddingBlockEnd: paddingSM,
         paddingBlockStart: paddingXXS,
@@ -174,18 +162,30 @@ const genSenderStyle: GenerateStyle<SenderToken> = (token) => {
 };
 
 export const prepareComponentToken: GetDefaultToken<'Sender'> = (token) => {
-  const { colorPrimary } = token;
+  const { colorPrimary, colorFillTertiary } = token;
+
   const colorBgSlot = new FastColor(colorPrimary).setA(0.06).toRgbString();
   const colorTextSlot = colorPrimary;
   const colorTextSlotPlaceholder = new FastColor(colorPrimary).setA(0.25).toRgbString();
   const colorBorderSlotHover = new FastColor(colorPrimary).setA(0.1).toRgbString();
   const colorBorderSlot = colorBgSlot;
+  const switchCheckedBg = new FastColor(colorPrimary).setA(0.08).toRgbString();
+
+  const switchUncheckedHoverBg = new FastColor(colorFillTertiary).setA(0.04).toRgbString();
+  const switchCheckedHoverBg = new FastColor(colorPrimary).setA(0.1).toRgbString();
+  const colorBorderInput = new FastColor(colorFillTertiary).setA(0.1).toRgbString();
+  const boxShadowInput = `0 4px 12px 0 ${new FastColor(colorPrimary).setA(0.1).toRgbString()}`;
   return {
     colorBgSlot,
     colorTextSlot,
     colorTextSlotPlaceholder,
     colorBorderSlotHover,
     colorBorderSlot,
+    switchCheckedBg,
+    switchCheckedHoverBg,
+    switchUncheckedHoverBg,
+    colorBorderInput,
+    boxShadowInput,
   };
 };
 
@@ -199,10 +199,9 @@ export default genStyleHooks<'Sender'>(
     return [
       genSenderStyle(SenderToken),
       genSenderHeaderStyle(SenderToken),
+      genSenderSwitchStyle(SenderToken),
       genSlotTextAreaStyle(SenderToken),
     ];
   },
   prepareComponentToken,
 );
-
-export { genSlotTextAreaStyle };

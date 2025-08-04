@@ -34,12 +34,12 @@ const Demo: React.FC = () => {
       onCancel={() => {
         setLoading(false);
       }}
-      actions={(_, info) => {
+      suffix={(_, info) => {
         const { SendButton, LoadingButton, ClearButton, SpeechButton } = info.components;
 
         return (
           <Space size="small">
-            <Typography.Text type="secondary">
+            <Typography.Text style={{ whiteSpace: 'nowrap' }} type="secondary">
               <small>`Shift + Enter` to submit</small>
             </Typography.Text>
             <ClearButton />

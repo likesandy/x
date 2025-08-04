@@ -1,31 +1,32 @@
 import classnames from 'classnames';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
-
+import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import { useXProviderContext } from '../x-provider';
 import ActionsFeedback from './ActionsFeedback';
 import { ActionsContext } from './context';
 import Item from './Item';
 import type { ActionsProps } from './interface';
-
 import useStyle from './style';
 
-const ForwardActions: React.FC<ActionsProps> = (props) => {
+type ActionsRef = {
+  nativeElement: HTMLDivElement;
+};
+
+const ForwardActions = React.forwardRef<ActionsRef, ActionsProps>((props, ref) => {
   const {
     items = [],
     onClick,
     footer,
     dropdownProps = {},
     variant = 'borderless',
-
     prefixCls: customizePrefixCls,
     classNames = {},
     rootClassName = '',
     className = '',
     styles = {},
     style = {},
-
     ...otherHtmlProps
   } = props;
 
@@ -41,6 +42,7 @@ const ForwardActions: React.FC<ActionsProps> = (props) => {
   const contextConfig = useXComponentConfig('actions');
   const [hashId, cssVarCls] = useStyle(prefixCls);
 
+  // ============================= Class =============================
   const mergedCls = classnames(
     prefixCls,
     contextConfig.className,
@@ -60,8 +62,19 @@ const ForwardActions: React.FC<ActionsProps> = (props) => {
     ...style,
   };
 
+  // ============================= Refs =============================
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  useProxyImperativeHandle(ref, () => {
+    return {
+      nativeElement: containerRef.current!,
+    };
+  });
+
+  // ============================= Render =============================
+
   return (
-    <div {...domProps} className={mergedCls} style={mergedStyle}>
+    <div ref={containerRef} {...domProps} className={mergedCls} style={mergedStyle}>
       <ActionsContext.Provider
         value={{
           prefixCls,
@@ -92,7 +105,7 @@ const ForwardActions: React.FC<ActionsProps> = (props) => {
       </ActionsContext.Provider>
     </div>
   );
-};
+});
 
 type CompoundedActions = typeof ForwardActions & {
   Feedback: typeof ActionsFeedback;

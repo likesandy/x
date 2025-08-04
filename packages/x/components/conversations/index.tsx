@@ -4,6 +4,7 @@ import useMergedState from 'rc-util/lib/hooks/useMergedState';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
 import useCollapsible from '../_util/hooks/use-collapsible';
+import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import useShortcutKeys, { ShortcutKeyActionType } from '../_util/hooks/use-shortcut-keys';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import type { ShortcutKeys } from '../_util/type';
@@ -98,208 +99,228 @@ export interface ConversationsProps extends React.HTMLAttributes<HTMLUListElemen
   creation?: CreationProps;
 }
 
-type CompoundedComponent = {
+type CompoundedComponent = typeof ForwardConversations & {
   Creation: typeof Creation;
 };
 
-const Conversations: React.FC<ConversationsProps> & CompoundedComponent = (props) => {
-  const {
-    prefixCls: customizePrefixCls,
-    shortcutKeys: customizeShortcutKeys,
-    rootClassName,
-    items,
-    activeKey,
-    defaultActiveKey,
-    onActiveChange,
-    menu,
-    styles = {},
-    classNames = {},
-    groupable,
-    className,
-    style,
-    creation,
-    ...restProps
-  } = props;
+type ConversationsRef = {
+  nativeElement: HTMLDivElement;
+};
+const ForwardConversations = React.forwardRef<ConversationsRef, ConversationsProps>(
+  (props, ref) => {
+    const {
+      prefixCls: customizePrefixCls,
+      shortcutKeys: customizeShortcutKeys,
+      rootClassName,
+      items,
+      activeKey,
+      defaultActiveKey,
+      onActiveChange,
+      menu,
+      styles = {},
+      classNames = {},
+      groupable,
+      className,
+      style,
+      creation,
+      ...restProps
+    } = props;
 
-  const domProps = pickAttrs(restProps, {
-    attr: true,
-    aria: true,
-    data: true,
-  });
-
-  // ============================ ActiveKey ============================
-
-  const [mergedActiveKey, setMergedActiveKey] = useMergedState<ConversationsProps['activeKey']>(
-    defaultActiveKey,
-    {
-      value: activeKey,
-      onChange: (key) => {
-        if (key) {
-          onActiveChange?.(key);
-        }
-      },
-    },
-  );
-
-  // ============================ Groupable ============================
-  const [groupList, collapsibleOptions, keyList] = useGroupable(groupable, items);
-
-  // ============================ Prefix ============================
-  const { getPrefixCls, direction } = useXProviderContext();
-
-  const prefixCls = getPrefixCls('conversations', customizePrefixCls);
-
-  // ===================== Component Config =========================
-  const contextConfig = useXComponentConfig('conversations');
-
-  // ============================ Style ============================
-  const [hashId, cssVarCls] = useStyle(prefixCls);
-
-  const mergedCls = classnames(
-    prefixCls,
-    contextConfig.className,
-    contextConfig.classNames.root,
-    className,
-    classNames.root,
-    rootClassName,
-    hashId,
-    cssVarCls,
-    {
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-    },
-  );
-
-  // ============================ Events ============================
-  const onConversationItemClick: ConversationsItemProps['onClick'] = (key) => {
-    setMergedActiveKey(key);
-  };
-
-  // ============================ Short Key =========================
-  const [_, shortcutKeysInfo, subscribe] = useShortcutKeys('conversations', customizeShortcutKeys);
-  const shortKeyAction = (shortcutKeyAction: ShortcutKeyActionType) => {
-    switch (shortcutKeyAction?.name) {
-      case 'items':
-        {
-          const index = shortcutKeyAction?.actionKeyCodeNumber ?? shortcutKeyAction?.index;
-          if (typeof index === 'number' && !keyList?.[index]?.disabled && keyList?.[index]?.key) {
-            setMergedActiveKey(keyList?.[index]?.key);
-          }
-        }
-        break;
-      case 'creation':
-        {
-          if (typeof creation?.onClick === 'function' && !creation?.disabled) {
-            creation.onClick();
-          }
-        }
-        break;
-    }
-  };
-
-  subscribe(shortKeyAction);
-
-  // ============================ Item Node ============================
-  const getItemNode = (itemData: ItemType[]) =>
-    itemData.map((conversationInfo: ItemType, conversationIndex: number) => {
-      if (conversationInfo.type === 'divider') {
-        return (
-          <Divider
-            key={`key-divider-${conversationIndex}`}
-            className={`${prefixCls}-divider`}
-            dashed={conversationInfo.dashed}
-          />
-        );
-      }
-      const baseConversationInfo = conversationInfo as ConversationItemType;
-      const { label: _, disabled: __, icon: ___, ...restInfo } = baseConversationInfo;
-      return (
-        <ConversationsItem
-          {...restInfo}
-          key={baseConversationInfo.key || `key-${conversationIndex}`}
-          info={baseConversationInfo}
-          prefixCls={prefixCls}
-          direction={direction}
-          className={classnames(
-            classNames.item,
-            contextConfig.classNames.item,
-            baseConversationInfo.className,
-          )}
-          style={{
-            ...contextConfig.styles.item,
-            ...styles.item,
-            ...baseConversationInfo.style,
-          }}
-          menu={typeof menu === 'function' ? menu(baseConversationInfo) : menu}
-          active={mergedActiveKey === baseConversationInfo.key}
-          onClick={onConversationItemClick}
-        />
-      );
+    const domProps = pickAttrs(restProps, {
+      attr: true,
+      aria: true,
+      data: true,
     });
 
-  //  ============================ Item Collapsible ============================
-  const rootPrefixCls = getPrefixCls();
-  const [enableCollapse, expandedKeys, onItemExpand, collapseMotion] = useCollapsible(
-    collapsibleOptions,
-    prefixCls,
-    rootPrefixCls,
-  );
+    // ============================= Refs =============================
+    const containerRef = React.useRef<any>(null);
 
-  // ============================ Render ============================
-  return (
-    <ul
-      {...domProps}
-      style={{
-        ...contextConfig.style,
-        ...style,
-        ...contextConfig.styles.root,
-        ...styles.root,
-      }}
-      className={mergedCls}
-    >
-      {!!creation && (
-        <Creation
-          className={classnames(contextConfig.classNames.creation, classNames.creation)}
-          style={{
-            ...contextConfig.styles.creation,
-            ...styles.creation,
-          }}
-          shortcutKeyInfo={shortcutKeysInfo?.creation}
-          prefixCls={`${prefixCls}-creation`}
-          {...creation}
-        />
-      )}
-      {groupList.map((groupInfo, groupIndex) => {
-        const itemNode = getItemNode(groupInfo.data);
-        return groupInfo.enableGroup ? (
-          <GroupTitleContext.Provider
-            key={groupInfo.name || `key-${groupIndex}`}
-            value={{
-              prefixCls,
-              groupInfo,
-              enableCollapse,
-              expandedKeys,
-              onItemExpand,
-              collapseMotion,
+    useProxyImperativeHandle(ref, () => {
+      return {
+        nativeElement: containerRef.current!,
+      };
+    });
+
+    // ============================ ActiveKey ============================
+
+    const [mergedActiveKey, setMergedActiveKey] = useMergedState<ConversationsProps['activeKey']>(
+      defaultActiveKey,
+      {
+        value: activeKey,
+        onChange: (key) => {
+          if (key) {
+            onActiveChange?.(key);
+          }
+        },
+      },
+    );
+
+    // ============================ Groupable ============================
+    const [groupList, collapsibleOptions, keyList] = useGroupable(groupable, items);
+
+    // ============================ Prefix ============================
+    const { getPrefixCls, direction } = useXProviderContext();
+
+    const prefixCls = getPrefixCls('conversations', customizePrefixCls);
+
+    // ===================== Component Config =========================
+    const contextConfig = useXComponentConfig('conversations');
+
+    // ============================ Style ============================
+    const [hashId, cssVarCls] = useStyle(prefixCls);
+
+    const mergedCls = classnames(
+      prefixCls,
+      contextConfig.className,
+      contextConfig.classNames.root,
+      className,
+      classNames.root,
+      rootClassName,
+      hashId,
+      cssVarCls,
+      {
+        [`${prefixCls}-rtl`]: direction === 'rtl',
+      },
+    );
+
+    // ============================ Events ============================
+    const onConversationItemClick: ConversationsItemProps['onClick'] = (key) => {
+      setMergedActiveKey(key);
+    };
+
+    // ============================ Short Key =========================
+    const [_, shortcutKeysInfo, subscribe] = useShortcutKeys(
+      'conversations',
+      customizeShortcutKeys,
+    );
+    const shortKeyAction = (shortcutKeyAction: ShortcutKeyActionType) => {
+      switch (shortcutKeyAction?.name) {
+        case 'items':
+          {
+            const index = shortcutKeyAction?.actionKeyCodeNumber ?? shortcutKeyAction?.index;
+            if (typeof index === 'number' && !keyList?.[index]?.disabled && keyList?.[index]?.key) {
+              setMergedActiveKey(keyList?.[index]?.key);
+            }
+          }
+          break;
+        case 'creation':
+          {
+            if (typeof creation?.onClick === 'function' && !creation?.disabled) {
+              creation.onClick();
+            }
+          }
+          break;
+      }
+    };
+
+    subscribe(shortKeyAction);
+
+    // ============================ Item Node ============================
+    const getItemNode = (itemData: ItemType[]) =>
+      itemData.map((conversationInfo: ItemType, conversationIndex: number) => {
+        if (conversationInfo.type === 'divider') {
+          return (
+            <Divider
+              key={`key-divider-${conversationIndex}`}
+              className={`${prefixCls}-divider`}
+              dashed={conversationInfo.dashed}
+            />
+          );
+        }
+        const baseConversationInfo = conversationInfo as ConversationItemType;
+        const { label: _, disabled: __, icon: ___, ...restInfo } = baseConversationInfo;
+        return (
+          <ConversationsItem
+            {...restInfo}
+            key={baseConversationInfo.key || `key-${conversationIndex}`}
+            info={baseConversationInfo}
+            prefixCls={prefixCls}
+            direction={direction}
+            className={classnames(
+              classNames.item,
+              contextConfig.classNames.item,
+              baseConversationInfo.className,
+            )}
+            style={{
+              ...contextConfig.styles.item,
+              ...styles.item,
+              ...baseConversationInfo.style,
             }}
-          >
-            <GroupTitle className={classnames(contextConfig.classNames.group, classNames.group)}>
-              <ul
-                className={classnames(`${prefixCls}-list`, {
-                  [`${prefixCls}-group-collapsible-list`]: groupInfo.collapsible,
-                })}
-                style={{ ...contextConfig.styles.group, ...styles.group }}
-              >
-                {itemNode}
-              </ul>
-            </GroupTitle>
-          </GroupTitleContext.Provider>
-        ) : (
-          itemNode
+            menu={typeof menu === 'function' ? menu(baseConversationInfo) : menu}
+            active={mergedActiveKey === baseConversationInfo.key}
+            onClick={onConversationItemClick}
+          />
         );
-      })}
-    </ul>
-  );
-};
+      });
+
+    //  ============================ Item Collapsible ============================
+    const rootPrefixCls = getPrefixCls();
+    const [enableCollapse, expandedKeys, onItemExpand, collapseMotion] = useCollapsible(
+      collapsibleOptions,
+      prefixCls,
+      rootPrefixCls,
+    );
+
+    // ============================ Render ============================
+    return (
+      <ul
+        {...domProps}
+        style={{
+          ...contextConfig.style,
+          ...style,
+          ...contextConfig.styles.root,
+          ...styles.root,
+        }}
+        className={mergedCls}
+        ref={containerRef}
+      >
+        {!!creation && (
+          <Creation
+            className={classnames(contextConfig.classNames.creation, classNames.creation)}
+            style={{
+              ...contextConfig.styles.creation,
+              ...styles.creation,
+            }}
+            shortcutKeyInfo={shortcutKeysInfo?.creation}
+            prefixCls={`${prefixCls}-creation`}
+            {...creation}
+          />
+        )}
+        {groupList.map((groupInfo, groupIndex) => {
+          const itemNode = getItemNode(groupInfo.data);
+          return groupInfo.enableGroup ? (
+            <GroupTitleContext.Provider
+              key={groupInfo.name || `key-${groupIndex}`}
+              value={{
+                prefixCls,
+                groupInfo,
+                enableCollapse,
+                expandedKeys,
+                onItemExpand,
+                collapseMotion,
+              }}
+            >
+              <GroupTitle className={classnames(contextConfig.classNames.group, classNames.group)}>
+                <ul
+                  className={classnames(`${prefixCls}-list`, {
+                    [`${prefixCls}-group-collapsible-list`]: groupInfo.collapsible,
+                  })}
+                  style={{ ...contextConfig.styles.group, ...styles.group }}
+                >
+                  {itemNode}
+                </ul>
+              </GroupTitle>
+            </GroupTitleContext.Provider>
+          ) : (
+            itemNode
+          );
+        })}
+      </ul>
+    );
+  },
+);
+
+const Conversations = ForwardConversations as CompoundedComponent;
 
 if (process.env.NODE_ENV !== 'production') {
   Conversations.displayName = 'Conversations';

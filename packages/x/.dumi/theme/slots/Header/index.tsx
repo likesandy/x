@@ -109,13 +109,19 @@ const Header: React.FC = () => {
 
   const { scrollY, scrollYDirection } = useScrollY();
 
+  let clientHeight = 1080;
   let innerHeight = 1080;
 
   if (typeof window !== 'undefined') {
+    clientHeight = document.body.clientHeight
     innerHeight = window.innerHeight;
   }
 
-  const isMini = scrollY > innerHeight && !isMobile;
+  const isMini = scrollY > Math.min(innerHeight * 0.5, clientHeight * 0.25) && !isMobile;
+
+  const isHidden = scrollY > Math.min(innerHeight * 1.5, clientHeight * 0.5) && scrollYDirection === 'down';
+
+  const isActionHidden = scrollY > 200;
 
   const sharedProps: SharedProps = {
     isZhCN: lang === 'cn',
@@ -145,18 +151,19 @@ const Header: React.FC = () => {
       </Drawer>
     );
   } else {
+
     content = (
       <>
         <Navigation
           {...sharedProps}
           className={classnames(!isMobile && !isMini && styles.background)}
         />
-        <HeaderActions {...sharedProps} />
+        {!isActionHidden ? <HeaderActions {...sharedProps} /> : null}
       </>
     );
   }
 
-  const isHidden = scrollY > innerHeight * 1.5 && scrollYDirection === 'down';
+
 
   return (
     <header

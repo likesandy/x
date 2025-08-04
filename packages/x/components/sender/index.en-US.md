@@ -16,18 +16,20 @@ coverDark: https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*cOfrS4fVkOMAAA
 ## Examples
 
 <!-- prettier-ignore -->
-<code src="./demo/basic.tsx">Basic</code>
+<code src="./demo/agent.tsx">Agent Sender</code>
+<code src="./demo/basic.tsx">Basic Usage</code>
+<code src="./demo/switch.tsx">Feature Switch</code>
 <code src="./demo/slot-filling.tsx">Slot Mode</code>
-<code src="./demo/submitType.tsx">Submit type</code>
-<code src="./demo/speech.tsx">Speech input</code>
-<code src="./demo/speech-custom.tsx">Custom speech input</code>
-<code src="./demo/actions.tsx">Custom actions</code>
-<code src="./demo/header.tsx">Header panel</code>
+<code src="./demo/ref-action.tsx">Instance Methods</code>
+<code src="./demo/submitType.tsx">Submit Type</code>
+<code src="./demo/speech.tsx">Speech Input</code>
+<code src="./demo/speech-custom.tsx">Custom Speech Input</code>
+<code src="./demo/suffix.tsx">Custom Suffix</code>
+<code src="./demo/header.tsx">Expandable Panel</code>
 <code src="./demo/header-fixed.tsx">Reference</code>
-<code src="./demo/footer.tsx">Custom footer</code>
-<code src="./demo/send-style.tsx">Adjust style</code>
-<code src="./demo/paste-image.tsx">Paste files</code>
-<code src="./demo/focus.tsx">Focus</code>
+<code src="./demo/footer.tsx">Custom Footer</code>
+<code src="./demo/send-style.tsx">Adjust Style</code>
+<code src="./demo/paste-image.tsx">Paste Files</code>
 
 ## API
 
@@ -37,16 +39,16 @@ Common props ref：[Common props](/docs/react/common-props)
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| actions | Custom actions,set as `actions: false` when you don't need default actions | ReactNode \| (oriNode, info: { components:ActionsComponents }) => ReactNode | - | - |
 | allowSpeech | Whether to allow speech input | boolean \| SpeechConfig | false | - |
 | classNames | Class name | [See below](#semantic-dom) | - | - |
 | components | Custom components | Record<'input', ComponentType> | - | - |
 | defaultValue | Default value of input | string | - | - |
 | disabled | Whether to disable | boolean | false | - |
 | loading | Whether it is loading | boolean | false | - |
-| header | Header panel | ReactNode | - | - |
-| prefix | Prefix content | ReactNode | - | - |
-| footer | Footer content | ReactNode \| (info: { components: ActionsComponents }) => ReactNode | - | - |
+| suffix | Suffix content, shows action buttons by default. Set `suffix={false}` to hide default actions. | React.ReactNode \| false \| (oriNode: React.ReactNode, info: { components: ActionsComponents; }) => React.ReactNode \| false | oriNode | - |
+| header | Header panel | React.ReactNode \| false \| (oriNode: React.ReactNode, info: { components: ActionsComponents; }) => React.ReactNode \| false | false | - |
+| prefix | Prefix content | React.ReactNode \| false \| (oriNode: React.ReactNode, info: { components: ActionsComponents; }) => React.ReactNode \| false | false | - |
+| footer | Footer content | React.ReactNode \| false \| (oriNode: React.ReactNode, info: { components: ActionsComponents; }) => React.ReactNode \| false | false | - |
 | readOnly | Whether to make the input box read-only | boolean | false | - |
 | rootClassName | Root element class name | string | - | - |
 | styles | Semantic DOM style | [See below](#semantic-dom) | - | - |
@@ -56,8 +58,8 @@ Common props ref：[Common props](/docs/react/common-props)
 | onChange | Callback when input value changes | (value: string, event?: React.FormEvent<`HTMLTextAreaElement`> \| React.ChangeEvent<`HTMLTextAreaElement`>, slotConfig?: SlotConfigType[]) => void | - | - |
 | onCancel | Callback when click cancel button | () => void | - | - |
 | onPasteFile | Callback when paste files | (firstFile: File, files: FileList) => void | - | - |
-| autoSize | Height auto size feature, can be set to true \| false or an object { minRows: 2, maxRows: 6 } | boolean \| { minRows?: number; maxRows?: number } | { maxRows: 8 } | - |
-| slotConfig | Slot configuration, after configuration, the input box will become slot mode, supporting structured input | SlotConfigType[] | - | - |
+| autoSize | Height auto size feature, can be set to true \| false or an object: { minRows: 2, maxRows: 6 } | boolean \| { minRows?: number; maxRows?: number } | { maxRows: 8 } | - |
+| initialSlotConfig | Slot configuration, after configuration, the input box will become slot mode, supporting structured input. In this mode, `value` and `defaultValue` are invalid. | SlotConfigType[] | - | - |
 
 ```typescript | pure
 type SpeechConfig = {
@@ -84,7 +86,7 @@ type ActionsComponents = {
 | nativeElement | Outer container | `HTMLDivElement` | - | - |
 | focus | Set focus | (option?: { preventScroll?: boolean, cursor?: 'start' \| 'end' \| 'all' }) | - | - |
 | blur | Remove focus | () => void | - | - |
-| insert | Insert text content to the end | (value: string) => void | - | - |
+| insert | Insert text or slot(s). When using slot(s), make sure initialSlotConfig is set. | (value: string) => void \| (slotConfig: SlotConfigType[], position?: insertPosition) => void; | - | - |
 | clear | Clear content | () => void | - | - |
 | getValue | Get current content and structured configuration | () => { value: string; config: SlotConfigType[] } | - | - |
 
@@ -136,24 +138,40 @@ type ActionsComponents = {
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | children | Panel content | ReactNode | - | - |
-| closable | Whether to close | boolean | true | - |
+| classNames | Class name | [See below](#semantic-dom) | - | - |
+| closable | Whether the panel can be closed | boolean | true | - |
 | forceRender | Force render, use when need ref internal elements on init | boolean | false | - |
 | open | Whether to expand | boolean | - | - |
+| styles | Semantic DOM style | [See below](#semantic-dom) | - | - |
 | title | Title content | ReactNode | - | - |
 | onOpenChange | Callback when the expansion state changes | (open: boolean) => void | - | - |
 
+### Sender.Switch
+
+| Property          | Description             | Type                       | Default | Version |
+| ----------------- | ----------------------- | -------------------------- | ------- | ------- |
+| children          | General content         | ReactNode                  | -       | -       |
+| checkedChildren   | Content when checked    | ReactNode                  | -       | -       |
+| unCheckedChildren | Content when unchecked  | ReactNode                  | -       | -       |
+| icon              | Set icon component      | ReactNode                  | -       | -       |
+| disabled          | Whether disabled        | boolean                    | false   | -       |
+| loading           | Loading state           | boolean                    | -       | -       |
+| value             | Switch value            | boolean                    | false   | -       |
+| onChange          | Callback when changed   | function(checked: boolean) | -       | -       |
+| rootClassName     | Root element class name | string                     | -       | -       |
+
 ### ⚠️ Notes for Slot Mode
 
-- **In slot mode, the `value` property is invalid**, please use `ref` and callback events to get the value and slotConfig.
-- **In slot mode, the third parameter `config` of `onChange`/`onSubmit` callback** is only used to get the current structured content, it is not recommended to assign it back to `slotConfig` directly, otherwise it will cause the input box content to be reset. Only when you need to switch/reset the slot structure as a whole should you update `slotConfig`.
-- Generally, slotConfig should only be set once during initialization or when the structure changes.
+- In slot mode, the `value` and `defaultValue` properties are invalid. Please use `ref` and callback events to get the value and slotConfig.
+- In slot mode, the third parameter `config` of the `onChange`/`onSubmit` callback is only used to get the current structured content. Do not assign it directly back to `slotConfig`, otherwise the input box content will be reset. Only update `slotConfig` when you need to switch or reset the slot structure as a whole.
+- Usually, `initialSlotConfig` should only be set once during initialization or when the structure changes. If you need to force re-render the component, use a different `key` prop.
 
 **Example:**
 
 ```jsx
-// ❌ Wrong usage (will cause cursor position loss and repeated rendering)
+// ❌ Wrong usage (initialSlotConfig is for initialization only)
 <Sender
-  slotConfig={config}
+  initialSlotConfig={config}
   onChange={(value, e, config) => {
     setConfig(config);
   }}
@@ -161,9 +179,11 @@ type ActionsComponents = {
 
 // ✅ Correct usage
 <Sender
-  slotConfig={config}
-  onChange={(value, e, config) => {
-    // Only used to get structured content
+  key={key}
+  initialSlotConfig={config}
+  onChange={(value, _e, config) => {
+    // Only used to get structured content, use key to force re-render
+    setKey('new_key');
     console.log(value, config);
   }}
 />

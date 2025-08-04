@@ -80,4 +80,15 @@ describe('Think Component', () => {
     await waitFakeTimer();
     expect(container.querySelector('.ant-think .ant-think-content')).toBeTruthy();
   });
+
+  it('Think supports ref', () => {
+    const ref = React.createRef<any>();
+    render(
+      <Think ref={ref} title="ref test">
+        ref content
+      </Think>,
+    );
+    expect(ref.current).not.toBeNull();
+    // 如有公开方法可补充断言
+  });
 });

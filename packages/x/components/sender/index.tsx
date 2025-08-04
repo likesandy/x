@@ -1,6 +1,7 @@
 import { Flex } from 'antd';
 import classnames from 'classnames';
 import { useMergedState } from 'rc-util';
+import pickAttrs from 'rc-util/lib/pickAttrs';
 import React from 'react';
 import useProxyImperativeHandle from '../_util/hooks/use-proxy-imperative-handle';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
@@ -13,8 +14,7 @@ import SpeechButton from './components/SpeechButton';
 import { SenderContext } from './context';
 import type {
   ActionsComponents,
-  ActionsRender,
-  FooterRender,
+  BaseNode,
   SenderComponents,
   SenderProps,
   SenderRef,
@@ -22,6 +22,7 @@ import type {
   SubmitType,
 } from './interface';
 import SenderHeader, { SendHeaderContext } from './SenderHeader';
+import SenderSwitch from './SenderSwitch';
 import SlotTextArea, { type SlotTextAreaRef } from './SlotTextArea';
 import useStyle from './style';
 import TextArea, { type TextAreaRef } from './TextArea';
@@ -29,8 +30,6 @@ import useSpeech from './useSpeech';
 
 export type {
   ActionsComponents,
-  ActionsRender,
-  FooterRender,
   SenderComponents,
   SenderProps,
   SenderRef,
@@ -48,7 +47,7 @@ const sharedRenderComponents = {
   SpeechButton,
 };
 
-const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
+const ForwardSender = React.forwardRef<SenderRef, SenderProps>((props, ref) => {
   const {
     prefixCls: customizePrefixCls,
     styles = {},
@@ -58,7 +57,7 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     style,
     defaultValue,
     value,
-    slotConfig,
+    initialSlotConfig,
     readOnly,
     submitType = 'enter',
     onSubmit,
@@ -66,7 +65,7 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     components,
     onCancel,
     onChange,
-    actions,
+    suffix,
     onKeyUp,
     onKeyDown,
     disabled,
@@ -77,20 +76,33 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     onPaste,
     onPasteFile,
     autoSize = { maxRows: 8 },
-    ...rest
+    placeholder,
+    onFocus,
+    onBlur,
+    ...restProps
   } = props;
 
+  const domProps = pickAttrs(restProps, {
+    attr: true,
+    aria: true,
+    data: true,
+  });
+
+  const id = React.useId();
+
+  const isSlotMode = Array.isArray(initialSlotConfig);
   // ============================= MISC =============================
   const { direction, getPrefixCls } = useXProviderContext();
   const prefixCls = getPrefixCls('sender', customizePrefixCls);
 
   // ============================= Refs =============================
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const inputRef = React.useRef<any>(null);
+  const inputRef = React.useRef<SenderRef>(null);
 
   useProxyImperativeHandle(ref, () => {
     return {
       nativeElement: containerRef.current!,
+      inputElement: inputRef.current?.nativeElement,
       focus: inputRef.current?.focus!,
       blur: inputRef.current?.blur!,
       insert: inputRef.current?.insert!,
@@ -101,10 +113,12 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
 
   // ======================= Component Config =======================
   const contextConfig = useXComponentConfig('sender');
+
   const inputCls = `${prefixCls}-input`;
 
   // ============================ Styles ============================
   const [hashId, cssVarCls] = useStyle(prefixCls);
+
   const mergedCls = classnames(
     prefixCls,
     contextConfig.className,
@@ -146,8 +160,13 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
 
   // ============================ Speech ============================
   const [speechPermission, triggerSpeech, speechRecording] = useSpeech((transcript) => {
-    if (slotConfig) {
-      (inputRef.current as SlotTextAreaRef)?.insert?.(transcript);
+    if (isSlotMode) {
+      (inputRef.current as SlotTextAreaRef)?.insert?.([
+        {
+          type: 'text',
+          value: transcript,
+        },
+      ]);
     } else {
       triggerValueChange(`${innerValue} ${transcript}`);
     }
@@ -162,13 +181,13 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
 
   const triggerClear = () => {
     triggerValueChange('');
-    if (slotConfig) {
+    if (isSlotMode) {
       (inputRef.current as SlotTextAreaRef)?.clear?.();
     }
   };
 
   // ============================ Action ============================
-  let actionNode: React.ReactNode = (
+  const actionNode: React.ReactNode = (
     <Flex className={`${actionListCls}-presets`}>
       {allowSpeech && <SpeechButton />}
       {/* Loading or Send */}
@@ -176,14 +195,37 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     </Flex>
   );
 
-  // Custom actions
-  if (typeof actions === 'function') {
-    actionNode = actions(actionNode, {
+  // ============================ Suffix ============================
+
+  let suffixNode: BaseNode = actionNode;
+
+  if (typeof suffix === 'function') {
+    suffixNode = suffix(actionNode, {
       components: sharedRenderComponents,
     });
-  } else if (actions || actions === false) {
-    actionNode = actions;
+  } else if (suffix || suffix === false) {
+    suffixNode = suffix;
   }
+
+  // ============================ Prefix ============================
+
+  const prefixNode =
+    typeof prefix === 'function'
+      ? prefix(actionNode, { components: sharedRenderComponents })
+      : prefix || null;
+
+  // ============================ Header ============================
+  const headerNode =
+    typeof header === 'function'
+      ? header(actionNode, { components: sharedRenderComponents })
+      : header || null;
+
+  // ============================ Footer ============================
+  const footerNode =
+    typeof footer === 'function'
+      ? footer(actionNode, { components: sharedRenderComponents })
+      : footer || null;
+
   // Custom actions context props
   const actionsButtonContextProps = {
     prefixCls: actionBtnCls,
@@ -199,16 +241,12 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     disabled,
   };
 
-  // ============================ Footer ============================
-  const footerNode =
-    typeof footer === 'function' ? footer({ components: sharedRenderComponents }) : footer || null;
-
   // ============================ Context ============================
   const contextValue = React.useMemo(
     () => ({
       value: innerValue,
       onChange: triggerValueChange,
-      slotConfig,
+      initialSlotConfig,
       onKeyUp,
       onKeyDown,
       onPaste,
@@ -223,15 +261,15 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
       autoSize,
       components,
       onSubmit,
-      placeholder: rest.placeholder,
-      onFocus: rest.onFocus,
-      onBlur: rest.onBlur,
-      ...rest,
+      placeholder,
+      onFocus,
+      onBlur,
+      ...restProps,
     }),
     [
       innerValue,
       triggerValueChange,
-      slotConfig,
+      initialSlotConfig,
       onKeyUp,
       onKeyDown,
       onPaste,
@@ -246,10 +284,10 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
       autoSize,
       components,
       onSubmit,
-      rest.placeholder,
-      rest.onFocus,
-      rest.onBlur,
-      rest,
+      placeholder,
+      onFocus,
+      onBlur,
+      restProps,
     ],
   );
 
@@ -258,7 +296,7 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
     // If input focused but click on the container,
     // input will lose focus.
     // We call `preventDefault` to prevent this behavior
-    if (!slotConfig && e.target !== containerRef.current?.querySelector(`.${inputCls}`)) {
+    if (!isSlotMode && e.target !== containerRef.current?.querySelector(`.${inputCls}`)) {
       e.preventDefault();
     }
     if (e.target === containerRef.current?.querySelector(`.${inputCls}`)) {
@@ -270,6 +308,7 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
   return (
     <SenderContext.Provider value={contextValue}>
       <div
+        key={id}
         ref={containerRef}
         className={mergedCls}
         style={{
@@ -278,15 +317,18 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
           ...contextConfig.styles.root,
           ...styles.root,
         }}
+        {...domProps}
       >
-        {/* Header */}
-        {header && (
-          <SendHeaderContext.Provider value={{ prefixCls }}>{header}</SendHeaderContext.Provider>
-        )}
         <ActionButtonContext.Provider value={actionsButtonContextProps}>
+          {/* Header */}
+          {headerNode && (
+            <SendHeaderContext.Provider value={{ prefixCls }}>
+              {headerNode}
+            </SendHeaderContext.Provider>
+          )}
           <div className={`${prefixCls}-content`} onMouseDown={onContentMouseDown}>
             {/* Prefix */}
-            {prefix && (
+            {prefixNode && (
               <div
                 className={classnames(
                   `${prefixCls}-prefix`,
@@ -295,28 +337,28 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
                 )}
                 style={{ ...contextConfig.styles.prefix, ...styles.prefix }}
               >
-                {prefix}
+                {prefixNode}
               </div>
             )}
 
             {/* Input */}
-            {slotConfig ? (
+            {isSlotMode ? (
               <SlotTextArea ref={inputRef as React.Ref<SlotTextAreaRef>} />
             ) : (
               <TextArea ref={inputRef as React.Ref<TextAreaRef>} />
             )}
 
             {/* Action List */}
-            {actionNode && (
+            {suffixNode && (
               <div
                 className={classnames(
                   actionListCls,
-                  contextConfig.classNames.actions,
-                  classNames.actions,
+                  contextConfig.classNames.suffix,
+                  classNames.suffix,
                 )}
-                style={{ ...contextConfig.styles.actions, ...styles.actions }}
+                style={{ ...contextConfig.styles.suffix, ...styles.suffix }}
               >
-                {actionNode}
+                {suffixNode}
               </div>
             )}
           </div>
@@ -343,6 +385,7 @@ const ForwardSender = React.forwardRef<any, SenderProps>((props, ref) => {
 
 type CompoundedSender = typeof ForwardSender & {
   Header: typeof SenderHeader;
+  Switch: typeof SenderSwitch;
 };
 
 const Sender = ForwardSender as CompoundedSender;
@@ -352,5 +395,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 Sender.Header = SenderHeader;
+Sender.Switch = SenderSwitch;
 
 export default Sender;

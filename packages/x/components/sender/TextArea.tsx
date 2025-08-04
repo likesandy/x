@@ -5,6 +5,7 @@ import pickAttrs from 'rc-util/lib/pickAttrs';
 import getValue from 'rc-util/lib/utils/get';
 import React from 'react';
 import { SenderContext } from './context';
+import { insertPosition } from './interface';
 
 function getComponent<T>(
   components: { input?: React.ComponentType<T> } | undefined,
@@ -18,7 +19,7 @@ export interface TextAreaRef {
   nativeElement: InputRef['nativeElement'];
   focus: InputRef['focus'];
   blur: InputRef['blur'];
-  insert: (value: string) => void;
+  insert: (value: string, position?: insertPosition) => void;
   clear: () => void;
   getValue: () => { value: string; config: any[] };
 }
@@ -38,20 +39,46 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
     prefixCls,
     styles = {},
     classNames = {},
-    autoSize = { maxRows: 8 },
+    autoSize,
     components,
     onSubmit,
     placeholder,
     onFocus,
     onBlur,
-    ...rest
+    ...restProps
   } = React.useContext(SenderContext);
 
   const inputRef = React.useRef<AntdInputRef>(null);
 
-  const insert = (insertValue: string) => {
-    const newValue = (value || '') + insertValue;
-    onChange?.(newValue);
+  const insert: TextAreaRef['insert'] = (insertValue: string, positions = 'cursor') => {
+    const textArea = (inputRef.current as any)?.resizableTextArea?.textArea;
+    // 获取当前文本内容
+    const currentText = textArea.value;
+    let startPos = currentText.length;
+    let endPos = currentText.length;
+    if (positions === 'cursor') {
+      startPos = textArea?.selectionStart;
+      endPos = textArea?.selectionEnd;
+    }
+    if (positions === 'start') {
+      startPos = 0;
+      endPos = 0;
+    }
+
+    // 在光标位置插入新文本
+    textArea.value =
+      currentText.substring(0, startPos) +
+      insertValue +
+      currentText.substring(endPos, currentText.length);
+
+    // 设置新的光标位置
+    textArea.selectionStart = startPos + insertValue.length;
+    textArea.selectionEnd = startPos + insertValue.length;
+
+    // 重新聚焦到textarea
+    textArea.focus();
+
+    onChange?.(textArea.value);
   };
 
   const clear = () => {
@@ -62,14 +89,16 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
     return { value: value || '', config: [] };
   };
 
-  React.useImperativeHandle(ref, () => ({
-    nativeElement: (inputRef.current as any)?.resizableTextArea?.textArea as HTMLTextAreaElement,
-    focus: inputRef.current?.focus!,
-    blur: inputRef.current?.blur!,
-    insert,
-    clear,
-    getValue,
-  }));
+  React.useImperativeHandle(ref, () => {
+    return {
+      nativeElement: (inputRef.current as any)?.resizableTextArea?.textArea as HTMLTextAreaElement,
+      focus: inputRef.current?.focus!,
+      blur: inputRef.current?.blur!,
+      insert,
+      clear,
+      getValue,
+    };
+  });
 
   // ============================ Submit ============================
   const isCompositionRef = React.useRef(false);
@@ -119,7 +148,7 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
 
   const InputTextArea = getComponent(components, ['input'], Input.TextArea);
 
-  const domProps = pickAttrs(rest, {
+  const domProps = pickAttrs(restProps, {
     attr: true,
     aria: true,
     data: true,
@@ -130,6 +159,13 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
     ref: inputRef,
   };
 
+  const mergeOnChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(
+      (event.target as HTMLTextAreaElement).value,
+      event as React.ChangeEvent<HTMLTextAreaElement>,
+    );
+  };
+
   return (
     <InputTextArea
       {...inputProps}
@@ -138,12 +174,7 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
       className={classnames(`${prefixCls}-input`, classNames.input)}
       autoSize={autoSize}
       value={value}
-      onChange={(event) => {
-        onChange?.(
-          (event.target as HTMLTextAreaElement).value,
-          event as React.ChangeEvent<HTMLTextAreaElement>,
-        );
-      }}
+      onChange={mergeOnChange}
       onKeyUp={onInternalKeyUp}
       onCompositionStart={onInternalCompositionStart}
       onCompositionEnd={onInternalCompositionEnd}
