@@ -93,7 +93,6 @@ export default function FileList(props: FileListProps) {
       fileCardMap.push({
         key: items[i].uid || i,
         description: desc,
-        size: items[i].size,
         src: previewUrl,
         preview,
         classNames: {file: `${cardCls}-status-${status}`, description: `${cardCls}-desc`},

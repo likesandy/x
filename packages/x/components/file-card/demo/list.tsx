@@ -34,17 +34,6 @@ const App = () => {
     <Flex vertical gap="middle" style={{ width: '900px' }}>
       <FileCard.List items={files} removable />
       <FileCard.List items={files} removable size="small" />
-      <FileCard.List
-        items={[{
-          name: 'excel-file.xlsx',
-          size: 1024,
-        },
-        {
-          name: 'word-file.docx',
-          size: 1024,
-        }]}
-        removable
-      />
     </Flex>
   );
 };

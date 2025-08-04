@@ -23,8 +23,11 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
     colorTextLightSolid,
     lineHeightLG,
     marginXXS,
-    borderRadius,
     fontSizeHeading1,
+    borderRadiusLG,
+    fontSizeHeading4,
+    controlHeightLG,
+    marginXS,
     calc,
   } = token;
 
@@ -38,7 +41,7 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
         padding: `${paddingSM} ${padding}`,
         cursor: 'pointer',
         backgroundColor: colorFillTertiary,
-        borderRadius: calc(borderRadius).mul(2).equal(),
+        borderRadius: paddingSM,
         position: 'relative',
         overflow: 'hidden',
 
@@ -106,17 +109,38 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
         },
       },
 
+      [`${componentCls}-file-small`]: {
+        borderRadius: borderRadiusLG,
+        padding: `0 ${paddingSM}`,
+        height: controlHeightLG,
+
+        [`${componentCls}-file-icon`]: {
+          fontSize: fontSizeHeading4,
+          marginInlineEnd: marginXS,
+        },
+
+        [`${componentCls}-file-description`]: {
+          display: 'none',
+        },
+      },
+
       [`${componentCls}-image`]: {
         width: 200,
         height: 200,
-        borderRadius: calc(borderRadius).mul(2).equal(),
+        borderRadius: paddingSM,
         overflow: 'hidden',
+
+        img: {
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: 'inherit',
+        }
       },
 
       [`${componentCls}-video`]: {
         width: 548,
         height: 308,
-        borderRadius: calc(borderRadius).mul(2).equal(),
+        borderRadius: paddingSM,
       },
 
       [`${componentCls}-audio`]: {
@@ -135,15 +159,12 @@ const genFileCardListStyle: GenerateStyle<FileCardToken> = (token) => {
     componentCls,
     padding,
     paddingSM,
-    controlHeightLG,
     colorFillTertiary,
     marginXS,
     colorTextLabel,
     fontSize,
     fontSizeLG,
     borderRadius,
-    borderRadiusLG,
-    fontSizeHeading4,
     motionDurationSlow,
     calc,
   } = token;
@@ -233,21 +254,7 @@ const genFileCardListStyle: GenerateStyle<FileCardToken> = (token) => {
       },
 
       // small size
-      '&-small-size': {
-        [`${componentCls}-file`]: {
-          borderRadius: borderRadiusLG,
-          padding: `0 ${paddingSM}`,
-          height: controlHeightLG,
-
-          [`${componentCls}-file-icon`]: {
-            fontSize: fontSizeHeading4,
-            marginInlineEnd: marginXS,
-          },
-
-          [`${componentCls}-file-description`]: {
-            display: 'none',
-          },
-        },
+      '&-small': {
 
         [`${componentCls}-list-remove`]: {
           fontSize: fontSize,

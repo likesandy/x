@@ -67,7 +67,7 @@ const List: React.FC<FileCardListProps> = (props) => {
       [`${compCls}-overflow-${props.overflow}`]: overflow,
       [`${compCls}-overflow-ping-start`]: pingStart,
       [`${compCls}-overflow-ping-end`]: pingEnd,
-      [`${compCls}-small-size`]: size === 'small',
+      [`${compCls}-small`]: size === 'small',
     },
   );
 
@@ -134,6 +134,7 @@ const List: React.FC<FileCardListProps> = (props) => {
               <div className={classnames(`${compCls}-item`, motionCls)} style={motionStyle} key={key}>
                 <FileCard
                   {...item}
+                  showSize={size}
                   key={key}
                   className={classnames(item.className, classNames?.file)}
                   style={{ ...item.style, ...styles?.file }}

@@ -9,7 +9,8 @@ interface FileProps {
   prefixCls?: string;
   name?: string;
   ext?: string;
-  size?: number | string;
+  showSize?: 'small' | 'default';
+  size?: number;
   description?: React.ReactNode;
   icon?: React.ReactNode;
   iconColor?: string;
@@ -25,6 +26,7 @@ const File: React.FC<FileProps> = (props) => {
     name,
     ext,
     size,
+    showSize,
     description,
     icon,
     iconColor,
@@ -33,6 +35,14 @@ const File: React.FC<FileProps> = (props) => {
   } = props;
   const compCls = `${prefixCls}-file`;
 
+  const mergedCls = classnames(
+    compCls,
+    classNames.file,
+    {
+      [`${compCls}-small`]: showSize === 'small',
+    },
+  );
+
   const desc = useMemo(() => {
     if (description) {
       return description;
@@ -40,11 +50,11 @@ const File: React.FC<FileProps> = (props) => {
     if (typeof size === 'number') {
       return getSize(size);
     }
-    return size || '';
+    return '';
   }, [description, size]);
 
   return (
-    <div className={classnames(compCls, classNames.file)} style={styles.file} onClick={onClick}>
+    <div className={mergedCls} style={styles.file} onClick={onClick}>
       <div
         className={classnames(`${compCls}-icon`, classNames.icon)}
         style={{ color: iconColor, ...styles.icon }}

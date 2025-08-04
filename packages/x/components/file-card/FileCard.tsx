@@ -54,7 +54,8 @@ export type FileCardProps = FileExtendsProps & {
   rootClassName?: string;
   key?: React.Key;
   name: string;
-  size?: number | string;
+  size?: number;
+  showSize?: 'small' | 'default';
   description?: React.ReactNode;
   src?: string;
   mask?: React.ReactNode;
@@ -163,6 +164,7 @@ const FileCard: React.FC<FileCardProps> = (props) => {
     rootClassName,
     classNames = {},
     name,
+    showSize,
     size,
     description,
     icon: customIcon,
@@ -273,6 +275,7 @@ const FileCard: React.FC<FileCardProps> = (props) => {
         name={namePrefix}
         ext={nameSuffix}
         size={size}
+        showSize={showSize}
         description={description}
         icon={customIcon && typeof customIcon !== 'string' ? customIcon : icon}
         iconColor={iconColor}

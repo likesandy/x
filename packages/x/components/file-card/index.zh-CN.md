@@ -41,6 +41,7 @@ description: 用卡片的形式展示文件。
 | mask | 遮罩 | ReactNode | - | - |
 | icon | 自定义图标 | React.ReactNode \| PresetIcons | - | - |
 | onClick | 点击事件 | () => void | - | - |
+| showSize | 展示卡片大小 | 'small' \| 'default' | default | - |
 
 ```typescript
 type PresetIcons =

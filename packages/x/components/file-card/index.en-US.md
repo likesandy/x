@@ -42,6 +42,7 @@ Common props ref：[Common props](/docs/react/common-props)
 | mask | Custom mask | ReactNode | - | - |
 | icon | Custom icon | React.ReactNode \| PresetIcons | - | - |
 | onClick | Callback when click | () => void | - | - |
+| showSize | Show card size | 'small' \| 'default' | default | - |
 
 ```typescript
 type PresetIcons =
