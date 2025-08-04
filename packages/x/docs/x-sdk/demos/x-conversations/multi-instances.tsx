@@ -63,7 +63,7 @@ export default () => {
   const onUpdate = (type?: string) => {
     const instance = type === 'other' ? otherHandler : handler;
     const realActive = type === 'other' ? otherActive : active;
-    instance.setConversation(realActive, { label: 'Updated Conversation Item' });
+    instance.setConversation(realActive, { key: realActive, label: 'Updated Conversation Item' });
   };
 
   const menuConfig: ConversationsProps['menu'] = (conversation) => ({

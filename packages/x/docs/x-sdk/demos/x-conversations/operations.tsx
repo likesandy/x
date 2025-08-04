@@ -48,7 +48,7 @@ export default () => {
   };
 
   const onUpdate = () => {
-    setConversation(active, { label: 'Updated Conversation Item' });
+    setConversation(active, { key: active, label: 'Updated Conversation Item' });
   };
 
   const onReset = () => {

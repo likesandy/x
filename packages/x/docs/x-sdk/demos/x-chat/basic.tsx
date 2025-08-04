@@ -4,6 +4,12 @@ import { DefaultChatProvider, useXChat, XRequest } from '@ant-design/x-sdk';
 import { Flex, type GetProp } from 'antd';
 import React from 'react';
 
+type ChatMessage = {};
+interface ChatInput {
+  query: string;
+}
+type ChatOutput = {};
+
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const roles: GetProp<typeof Bubble.List, 'roles'> = {
@@ -27,17 +33,16 @@ const roles: GetProp<typeof Bubble.List, 'roles'> = {
 const App = () => {
   const [content, setContent] = React.useState('');
   const [provider] = React.useState(
-    new DefaultChatProvider({
+    new DefaultChatProvider<ChatMessage, ChatInput, ChatOutput>({
       request: XRequest('https://api.example.com/chat', {
         manual: true,
-        fetch: async (_, options) => {
+        fetch: async (_: string | URL | Request, options: RequestInit | undefined) => {
           await sleep();
-          const params = JSON.parse(options?.body || '{}');
-          return new Response(
-            JSON.stringify([`Mock success return. You said: ${params?.message}`]),
-            {
+          const params = JSON.parse((options?.body as string) || '{}');
+          return Promise.resolve(
+            new Response(JSON.stringify([`Mock success return. You said: ${params?.message}`]), {
               headers: { 'Content-Type': 'application/json' },
-            },
+            }),
           );
         },
       }),
@@ -70,7 +75,6 @@ const App = () => {
         onSubmit={(nextContent) => {
           onRequest({
             query: nextContent,
-            xx: 'sdf',
           });
           setContent('');
         }}

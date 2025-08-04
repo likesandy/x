@@ -1,7 +1,7 @@
 import { XModelMessage, XModelParams } from '../../x-model';
 import { XRequestOptions } from '../../x-request';
 import { SSEFields } from '../../x-stream';
-import AbstractChatProvider, { ChatProviderConfig, TransformMessage } from './AbstractChatProvider';
+import AbstractChatProvider, { TransformMessage } from './AbstractChatProvider';
 
 /**
  * LLM OpenAI Compatible Chat Provider
@@ -14,10 +14,6 @@ export default class OpenAIChatProvider<
   Input = XModelParams,
   Output extends Partial<Record<SSEFields, any>> = Partial<Record<SSEFields, any>>,
 > extends AbstractChatProvider<ChatMessage, Input, Output> {
-  constructor(config: ChatProviderConfig<Input, Output>) {
-    super(config);
-  }
-
   transformParams(
     requestParams: ChatMessage & Partial<Input>,
     options: XRequestOptions<Input, Output>,

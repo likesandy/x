@@ -2,7 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
 import { OpenAIChatProvider, useXChat, XModel } from '@ant-design/x-sdk';
 import { Flex, type GetProp } from 'antd';
-import React, { useRef } from 'react';
+import React from 'react';
 
 /**
  * 🔔 Please replace the BASE_URL, PATH, MODEL, API_KEY with your own values.
