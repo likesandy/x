@@ -7,6 +7,7 @@ $('lib/*')
   .filter(
     (filename: string) =>
       !filename.endsWith('plugins') &&
+      !filename.endsWith('hooks') &&
       !filename.endsWith('index.js') &&
       !filename.endsWith('index.d.ts') &&
       !filename.endsWith('.map'),
