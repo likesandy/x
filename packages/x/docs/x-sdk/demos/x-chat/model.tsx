@@ -1,7 +1,7 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
 import { OpenAIChatProvider, useXChat, XModel } from '@ant-design/x-sdk';
-import { XModelMessage, XModelParams, XModelResponse } from '@ant-design/x-sdk/es/x-model';
+import { XModelParams, XModelResponse } from '@ant-design/x-sdk/es/x-model';
 import { Flex, type GetProp } from 'antd';
 import React from 'react';
 
