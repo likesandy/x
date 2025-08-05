@@ -23,7 +23,7 @@ export default function useXConversations(config: XConversationConfig) {
     };
   }, []);
 
-  const conversations = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  const conversations = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 
   return {
     conversations,
