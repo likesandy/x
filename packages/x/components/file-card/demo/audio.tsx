@@ -15,12 +15,12 @@ const App = () => {
       />
       <FileCard
         name="audio-file.mp3"
-        size={1024}
+        byte={1024}
         type="file"
       />
       <FileCard
         name="video-file.mp4"
-        size={1024}
+        byte={1024}
         type="file"
       />
     </Flex>

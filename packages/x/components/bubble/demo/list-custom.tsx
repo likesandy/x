@@ -68,12 +68,12 @@ const App = () => {
         {
           key: '1',
           name: 'excel-file.xlsx',
-          size: 111111,
+          description: '111 KB',
         },
         {
           key: '2',
           name: 'word-file.docx',
-          size: 222222,
+          description: '222 KB',
         },
       ],
     },

@@ -12,7 +12,7 @@ const App = () => {
       <FileCard
         type="file"
         name="image-file.png"
-        size={1024}
+        byte={1024}
         src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
       />
     </Flex>

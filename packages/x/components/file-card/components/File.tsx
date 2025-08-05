@@ -9,8 +9,8 @@ interface FileProps {
   prefixCls?: string;
   name?: string;
   ext?: string;
-  showSize?: 'small' | 'default';
-  size?: number;
+  size?: 'small' | 'default';
+  byte?: number;
   description?: React.ReactNode;
   icon?: React.ReactNode;
   iconColor?: string;
@@ -26,7 +26,7 @@ const File: React.FC<FileProps> = (props) => {
     name,
     ext,
     size,
-    showSize,
+    byte,
     description,
     icon,
     iconColor,
@@ -39,7 +39,8 @@ const File: React.FC<FileProps> = (props) => {
     compCls,
     classNames.file,
     {
-      [`${compCls}-small`]: showSize === 'small',
+      [`${compCls}-pointer`]: !!onClick,
+      [`${compCls}-small`]: size === 'small',
     },
   );
 
@@ -47,11 +48,11 @@ const File: React.FC<FileProps> = (props) => {
     if (description) {
       return description;
     }
-    if (typeof size === 'number') {
-      return getSize(size);
+    if (typeof byte === 'number') {
+      return getSize(byte);
     }
     return '';
-  }, [description, size]);
+  }, [description, byte]);
 
   return (
     <div className={mergedCls} style={styles.file} onClick={onClick}>

@@ -152,7 +152,6 @@ const genFileListStyle: GenerateStyle<AttachmentsToken> = (token) => {
           display: 'flex',
           flexWrap: 'nowrap',
           maxWidth: '100%',
-          paddingInline: token.paddingXXS,
         },
 
         [`${cardCls}-ellipsis`]: {
@@ -182,7 +181,6 @@ export default genStyleHooks(
     return [
       genAttachmentsStyle(compToken),
       genFileListStyle(compToken),
-      // genFileCardStyle(compToken),
     ];
   },
   prepareComponentToken,

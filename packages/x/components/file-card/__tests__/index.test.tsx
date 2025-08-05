@@ -19,27 +19,27 @@ describe('FileCard Component', () => {
   });
 
   it('FileCard component work', () => {
-    const { container } = render(<FileCard name="test-file.txt" size={1024} />);
+    const { container } = render(<FileCard name="test-file.txt" byte={1024} />);
     const element = container.querySelector<HTMLDivElement>('.ant-file-card');
     expect(element).toBeTruthy();
     expect(element).toMatchSnapshot();
   });
 
   it('FileCard support classnames and styles', () => {
-    const { container } = render(<FileCard name="test-file.txt" size={1024} classNames={{ name: 'custom-class' }} styles={{ name: { color: 'red' } }} />);
+    const { container } = render(<FileCard name="test-file.txt" byte={1024} classNames={{ name: 'custom-class' }} styles={{ name: { color: 'red' } }} />);
     const namePrefix = container.querySelector<HTMLDivElement>('.ant-file-card-file-name');
     expect(namePrefix).toHaveClass('custom-class');
     expect(namePrefix).toHaveStyle({color: 'red'});
   });
 
-  it('FileCard support name and size', () => {
-    const { container } = render(<FileCard name="test-file.txt" size={1024} />);
+  it('FileCard support name and byte', () => {
+    const { container } = render(<FileCard name="test-file.txt" byte={1024} />);
     const namePrefix = container.querySelector<HTMLDivElement>('.ant-file-card-file-name-prefix');
     expect(namePrefix?.textContent).toBe('test-file');
     const nameSuffix = container.querySelector<HTMLDivElement>('.ant-file-card-file-name-suffix');
     expect(nameSuffix?.textContent).toBe('.txt');
-    const size = container.querySelector<HTMLDivElement>('.ant-file-card-file-description');
-    expect(size?.textContent).toBe('1 KB');
+    const byte = container.querySelector<HTMLDivElement>('.ant-file-card-file-description');
+    expect(byte?.textContent).toBe('1 KB');
   });
 
   it('FileCard support description', () => {
@@ -85,7 +85,7 @@ describe('FileCard Component', () => {
 
   it('FileCard support mask', () => {
     const { container } = render(
-      <FileCard name="test-file.txt" size={1024} mask={<div className="test-mask" />} />,
+      <FileCard name="test-file.txt" byte={1024} mask={<div className="test-mask" />} />,
     );
     const element = container.querySelector<HTMLDivElement>('.ant-file-card-file-mask .test-mask');
     expect(element).toBeTruthy();
@@ -110,11 +110,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
       />,
@@ -129,11 +129,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
       />,
@@ -149,11 +149,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
         overflow='scrollX'
@@ -168,11 +168,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
         overflow='scrollY'
@@ -187,11 +187,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
         overflow='scrollY'
@@ -206,11 +206,11 @@ describe('FileCard Component', () => {
       <FileCard.List
         items={[{
           name: 'excel-file.xlsx',
-          size: 1024,
+          byte: 1024,
         },
         {
           name: 'word-file.docx',
-          size: 1024,
+          byte: 1024,
         }]}
         removable
         extension={

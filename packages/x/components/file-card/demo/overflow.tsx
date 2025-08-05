@@ -7,7 +7,7 @@ const App = () => {
   const images = Array.from({ length: 20 }).map((_, index) => ({
     name: `image-file-${index}.png`,
     src: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    size: 1024,
+    byte: 1024,
   }));
 
   const [overflow, setOverflow] = React.useState<FileCardListProps['overflow']>('wrap');

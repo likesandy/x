@@ -34,14 +34,14 @@ description: 用卡片的形式展示文件。
 | classNames | 样式类名 | [Record<SemanticDOM, string>](#semantic-dom) | - | - |
 | styles | 样式 style | [Record<SemanticDOM, CSSProperties>](#semantic-dom) | - | - |
 | name | 文件名称 | string | - | - |
-| size | 文件大小 | number \| string | - | - |
+| byte | 文件大小 | number \| string | - | - |
 | description | 文件描述 | ReactNode | - | - |
 | type | 文件类型 | 'file' \| 'image' \| 'audio' \| 'video' | - | - |
 | src | 图片或文件地址 | string | - | - |
 | mask | 遮罩 | ReactNode | - | - |
 | icon | 自定义图标 | React.ReactNode \| PresetIcons | - | - |
 | onClick | 点击事件 | () => void | - | - |
-| showSize | 展示卡片大小 | 'small' \| 'default' | default | - |
+| size | 展示卡片大小 | 'small' \| 'default' | default | - |
 
 ```typescript
 type PresetIcons =
@@ -54,7 +54,10 @@ type PresetIcons =
   | 'word'
   | 'zip'
   | 'video'
-  | 'audio';
+  | 'audio'
+  | 'java'
+  | 'javascript'
+  | 'python';
 ```
 
 ### FileCardListProps

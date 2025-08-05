@@ -19,7 +19,7 @@ const App = () => {
     <>
       <FileCard
         name="txt-file.txt"
-        size={1024}
+        byte={1024}
         mask={
           <VerticalAlignBottomOutlined
             style={{ fontSize: 20 }}

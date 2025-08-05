@@ -5,16 +5,16 @@ import React from 'react';
 const App = () => {
   return (
     <Flex vertical gap="middle">
-      <FileCard name="excel-file.xlsx" size={1024} />
-      <FileCard name="word-file.docx" size={1024} />
-      <FileCard name="pdf-file.pdf" size={1024} />
-      <FileCard name="ppt-file.pptx" size={1024} />
-      <FileCard name="zip-file.zip" size={1024} />
-      <FileCard name="txt-file.txt" size={1024} />
-      <FileCard name="markdown-file.md" size={1024} />
-      <FileCard name="java-file.java" size={1024} />
-      <FileCard name="javascript-file.js" size={1024} />
-      <FileCard name="python-file.py" size={1024} />
+      <FileCard name="excel-file.xlsx" byte={1024} />
+      <FileCard name="word-file.docx" byte={1024} />
+      <FileCard name="pdf-file.pdf" byte={1024} />
+      <FileCard name="ppt-file.pptx" byte={1024} />
+      <FileCard name="zip-file.zip" byte={1024} />
+      <FileCard name="txt-file.txt" byte={1024} />
+      <FileCard name="markdown-file.md" byte={1024} />
+      <FileCard name="java-file.java" byte={1024} />
+      <FileCard name="javascript-file.js" byte={1024} />
+      <FileCard name="python-file.py" byte={1024} />
     </Flex>
   );
 };

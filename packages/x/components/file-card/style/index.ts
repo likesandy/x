@@ -39,11 +39,14 @@ const genFileCardStyle: GenerateStyle<FileCardToken> = (token) => {
         display: 'flex',
         alignItems: 'center',
         padding: `${paddingSM} ${padding}`,
-        cursor: 'pointer',
         backgroundColor: colorFillTertiary,
         borderRadius: paddingSM,
         position: 'relative',
         overflow: 'hidden',
+
+        '&-pointer': {
+          cursor: 'pointer',
+        },
 
         [`${componentCls}-file-icon`]: {
           fontSize: calc(fontSizeHeading1).sub(2).equal(),

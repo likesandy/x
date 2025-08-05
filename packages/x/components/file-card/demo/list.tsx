@@ -6,27 +6,27 @@ const App = () => {
   const files = [
     {
       name: 'excel-file.xlsx',
-      size: 1024,
+      byte: 1024,
     },
     {
       name: 'word-file.docx',
-      size: 1024,
+      byte: 1024,
     },
     {
       name: 'pdf-file.pdf',
-      size: 1024,
+      byte: 1024,
     },
     {
       name: 'ppt-file.pptx',
-      size: 1024,
+      byte: 1024,
     },
     {
       name: 'zip-file.zip',
-      size: 1024,
+      byte: 1024,
     },
     {
       name: 'txt-file.txt',
-      size: 1024,
+      byte: 1024,
     },
   ];
 

@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, type UploadProps } from 'antd';
+import { Button, type UploadProps, type ImageProps } from 'antd';
 import classnames from 'classnames';
 import React from 'react';
 import type { Attachment } from '..';
@@ -71,7 +71,7 @@ export default function FileList(props: FileListProps) {
       const previewUrl = items[i].thumbUrl || items[i].url || previewImg;
       const cardCls = `${prefixCls}-list-card`;
       const status = items[i].status;
-      let preview = undefined;
+      let preview: ImageProps['preview'] = undefined;
       if (previewUrl && status !== 'done') {
         const percent = items[i].percent;
         const mask = (
@@ -94,9 +94,11 @@ export default function FileList(props: FileListProps) {
         key: items[i].uid || i,
         description: desc,
         src: previewUrl,
-        preview,
         classNames: {file: `${cardCls}-status-${status}`, description: `${cardCls}-desc`},
-        ...items[i],
+        byte: items[i].size,
+        ...(items[i] as FileCardProps),
+        size: undefined,
+        preview: preview,
       });
     }
     setList(fileCardMap);

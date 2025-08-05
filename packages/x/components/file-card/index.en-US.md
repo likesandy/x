@@ -35,14 +35,14 @@ Common props ref：[Common props](/docs/react/common-props)
 | classNames | DOM class | [Record<SemanticDOM, string>](#semantic-dom) | - | - |
 | styles | DOM style | [Record<SemanticDOM, CSSProperties>](#semantic-dom) | - | - |
 | name | File name | string | - | - |
-| size | File size | number \| string | - | - |
+| byte | File size | number \| string | - | - |
 | description | File description | ReactNode | - | - |
 | type | File type | 'file' \| 'image' \| 'audio' \| 'video' | - | - |
 | src | link of image or file | string | - | - |
 | mask | Custom mask | ReactNode | - | - |
 | icon | Custom icon | React.ReactNode \| PresetIcons | - | - |
 | onClick | Callback when click | () => void | - | - |
-| showSize | Show card size | 'small' \| 'default' | default | - |
+| size | Show card size | 'small' \| 'default' | default | - |
 
 ```typescript
 type PresetIcons =
@@ -55,7 +55,10 @@ type PresetIcons =
   | 'word'
   | 'zip'
   | 'video'
-  | 'audio';
+  | 'audio'
+  | 'java'
+  | 'javascript'
+  | 'python';
 ```
 
 ### FileCardListProps

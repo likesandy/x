@@ -17,7 +17,7 @@ import { FileCardProps } from '../file-card';
 
 export type SemanticType = 'list' | 'item' | 'placeholder' | 'upload';
 
-export type Attachment = GetProp<UploadProps, 'fileList'>[number] & FileCardProps & {
+export type Attachment = GetProp<UploadProps, 'fileList'>[number] & Omit<FileCardProps,'size'|'byte'> & {
   description?: React.ReactNode;
 };
 
