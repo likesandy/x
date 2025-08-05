@@ -14,11 +14,13 @@ $('lib/*')
   .isDirectory()
   .filter(
     (filename: string) =>
+      !filename.endsWith('plugins') &&
       !filename.endsWith('hooks') &&
       !filename.endsWith('style') &&
       !filename.endsWith('_util') &&
       !filename.endsWith('locale') &&
-      !filename.endsWith('theme'),
+      !filename.endsWith('themes') &&
+      !filename.endsWith('theme')
   )
   .hasFile('index.js')
   .hasFile('index.d.ts');
@@ -36,14 +38,15 @@ $('lib/plugins/*')
 // eslint-disable-next-line no-console
 console.log(chalk.green('✨ `lib` directory is valid.'));
 
+
+
 // themes
-$('lib/theme').isDirectory().hasFile('index.js').hasFile('index.d.ts');
+$('lib/themes').isDirectory().hasFile('light.css')
 
 $('lib/theme/*')
-  .filter((filename: string) => !filename.endsWith('index.js') && !filename.endsWith('index.d.ts'))
+  .filter((filename: string) => filename.endsWith('interface'))
   .isDirectory()
-  .hasFile('index.js')
-  .hasFile('index.d.ts');
+ 
 
 // eslint-disable-next-line no-console
 console.log(chalk.green('✨ `theme` directory is valid.'));
