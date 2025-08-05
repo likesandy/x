@@ -50,7 +50,7 @@ export default () => {
   const onAdd = (type?: string) => {
     const instance = type === 'other' ? otherHandler : handler;
     instance.addConversation({
-      key: 'other' + (type === 'other' ? otherIdx : idx),
+      key: `other${type === 'other' ? otherIdx : idx}`,
       label: 'Conversation Item ' + (type === 'other' ? otherIdx : idx),
     });
     if (type === 'other') {

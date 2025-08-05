@@ -43,7 +43,7 @@ export default () => {
   };
 
   const onAdd = () => {
-    addConversation({ key: 'item' + idx, label: 'Conversation Item ' + idx });
+    addConversation({ key: `item${idx}`, label: `Conversation Item ${idx}` });
     idx = idx + 1;
   };
 
