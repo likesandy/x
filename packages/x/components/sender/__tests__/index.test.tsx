@@ -10,6 +10,12 @@ describe('Sender Component', () => {
 
   rtlTest(() => <Sender />);
 
+  it('Sender supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<Sender ref={ref} />);
+    expect(ref.current).not.toBeNull();
+  });
+
   it('loading state', () => {
     const { asFragment } = render(<Sender loading />);
     expect(asFragment()).toMatchSnapshot();

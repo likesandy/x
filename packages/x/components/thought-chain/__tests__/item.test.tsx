@@ -27,4 +27,10 @@ describe('ThoughtChain.Item Component', () => {
     expect(element).toBeTruthy();
     expect(element).toMatchSnapshot();
   });
+
+  it('ThoughtChain.Item supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<ThoughtChain.Item ref={ref} title="ref test" />);
+    expect(ref.current).not.toBeNull();
+  });
 });

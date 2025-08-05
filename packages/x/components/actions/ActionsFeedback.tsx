@@ -47,7 +47,6 @@ const ActionsFeedback: React.FC<ActionsFeedbackProps> = (props) => {
     onChange,
     className,
     style,
-
     prefixCls: customizePrefixCls,
     rootClassName,
     ...otherHtmlProps
@@ -61,12 +60,15 @@ const ActionsFeedback: React.FC<ActionsFeedbackProps> = (props) => {
 
   const [contextLocale] = useLocale('Actions', enUS.Actions);
 
+  // ============================ Prefix ============================
+
   const { direction, getPrefixCls } = useXProviderContext();
 
   const prefixCls = getPrefixCls('actions', customizePrefixCls);
   const [hashId, cssVarCls] = useStyle(prefixCls);
   const feedbackCls = `${prefixCls}-feedback`;
 
+  // ============================ Styles ============================
   const useStyles = createStyles(({ token }) => ({
     feedbackItem: {
       padding: token.paddingXXS,
@@ -92,6 +94,8 @@ const ActionsFeedback: React.FC<ActionsFeedbackProps> = (props) => {
     [`${feedbackCls}-rtl`]: direction === 'rtl',
   });
 
+  const onFeedBacKClick = () =>
+    onChange?.(value === FEEDBACK_VALUE.dislike ? FEEDBACK_VALUE.default : FEEDBACK_VALUE.dislike);
   return (
     <Space {...domProps} className={mergedCls} style={style}>
       {[FEEDBACK_VALUE.default, FEEDBACK_VALUE.like].includes(value as FEEDBACK_VALUE) && (
@@ -113,11 +117,7 @@ const ActionsFeedback: React.FC<ActionsFeedbackProps> = (props) => {
       {[FEEDBACK_VALUE.default, FEEDBACK_VALUE.dislike].includes(value as FEEDBACK_VALUE) && (
         <Tooltip title={contextLocale.feedbackDislike}>
           <span
-            onClick={() =>
-              onChange?.(
-                value === FEEDBACK_VALUE.dislike ? FEEDBACK_VALUE.default : FEEDBACK_VALUE.dislike,
-              )
-            }
+            onClick={onFeedBacKClick}
             className={styles.feedbackItem}
             data-testid="feedback-dislike"
           >

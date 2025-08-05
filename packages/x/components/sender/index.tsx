@@ -118,6 +118,7 @@ const ForwardSender = React.forwardRef<SenderRef, SenderProps>((props, ref) => {
 
   // ============================ Styles ============================
   const [hashId, cssVarCls] = useStyle(prefixCls);
+
   const mergedCls = classnames(
     prefixCls,
     contextConfig.className,

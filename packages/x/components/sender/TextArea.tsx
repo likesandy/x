@@ -159,6 +159,13 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
     ref: inputRef,
   };
 
+  const mergeOnChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(
+      (event.target as HTMLTextAreaElement).value,
+      event as React.ChangeEvent<HTMLTextAreaElement>,
+    );
+  };
+
   return (
     <InputTextArea
       {...inputProps}
@@ -167,12 +174,7 @@ const TextArea = React.forwardRef<TextAreaRef>((_, ref) => {
       className={classnames(`${prefixCls}-input`, classNames.input)}
       autoSize={autoSize}
       value={value}
-      onChange={(event) => {
-        onChange?.(
-          (event.target as HTMLTextAreaElement).value,
-          event as React.ChangeEvent<HTMLTextAreaElement>,
-        );
-      }}
+      onChange={mergeOnChange}
       onKeyUp={onInternalKeyUp}
       onCompositionStart={onInternalCompositionStart}
       onCompositionEnd={onInternalCompositionEnd}

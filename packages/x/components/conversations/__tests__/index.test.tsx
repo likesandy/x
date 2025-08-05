@@ -71,6 +71,12 @@ let cleanUp: () => void;
 
 describe('Conversations Component', () => {
   mountTest(() => <Conversations />);
+
+  it('Conversations supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<Conversations ref={ref} items={items} />);
+    expect(ref.current).not.toBeNull();
+  });
   beforeEach(() => {
     cleanUp = jest.spyOn(console, 'error').mockImplementation(() => {}).mockRestore;
   });

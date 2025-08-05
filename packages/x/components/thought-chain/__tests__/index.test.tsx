@@ -81,6 +81,11 @@ describe('ThoughtChain Component', () => {
     expect(element).toBeTruthy();
     expect(element).toMatchSnapshot();
   });
+  it('ThoughtChain component supports ref', () => {
+    const ref = React.createRef<any>();
+    render(<ThoughtChain ref={ref} items={items} />);
+    expect(ref.current).not.toBeNull();
+  });
   it('ThoughtChain component work with collapsible', () => {
     const onExpand = jest.fn();
     const App = () => {
