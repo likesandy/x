@@ -106,7 +106,6 @@
     {
       "includes": [
         "**/packages/x/components/**/*/demo/**/*",
-        "**/packages/x-card/src/**/*",
         "**/packages/x-sdk/src/**/*",
         "**/packages/x-markdown/src/**/*"
       ],

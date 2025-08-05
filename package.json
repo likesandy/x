@@ -42,10 +42,6 @@
       "limit": "350 KiB"
     },
     {
-      "path": "./packages/x-card/dist/x-card.min.js",
-      "limit": "350 KiB"
-    },
-    {
       "path": "./packages/x-sdk/dist/x-sdk.min.js",
       "limit": "350 KiB"
     },
