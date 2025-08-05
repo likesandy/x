@@ -15,6 +15,7 @@ $('lib/*')
   .isDirectory()
   .filter(
     (filename: string) =>
+      !filename.endsWith('hooks') &&
       !filename.endsWith('style') &&
       !filename.endsWith('_util') &&
       !filename.endsWith('locale') &&
