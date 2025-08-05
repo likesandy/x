@@ -1,6 +1,8 @@
 import {
   AntDesignOutlined,
+  CheckOutlined,
   CopyOutlined,
+  EditOutlined,
   LinkOutlined,
   RedoOutlined,
   UserOutlined,
@@ -48,19 +50,26 @@ Link: [Ant Design X](https://x.ant.design)
 function useBubbleList(initialItems: BubbleData[] = []) {
   const [items, setItems] = React.useState<BubbleData[]>(initialItems);
 
-  const appendItem = useCallback((item: BubbleData) => {
+  const add = useCallback((item: BubbleData) => {
     setItems((prev) => [...prev, item]);
   }, []);
 
-  return [items, setItems, appendItem] as const;
+  const update = useCallback(
+    (key: string | number, data: Omit<Partial<BubbleData>, 'key' | 'role'>) => {
+      setItems((prev) => prev.map((item) => (item.key === key ? { ...item, ...data } : item)));
+    },
+    [],
+  );
+
+  return [items, setItems, add, update] as const;
 }
 
 const App = () => {
   const listRef = React.useRef<GetRef<typeof Bubble.List>>(null);
-  const [items, setItems, appendItem] = useBubbleList();
+  const [items, set, add, update] = useBubbleList();
 
   useEffect(() => {
-    setItems([
+    set([
       genItem(false, { typing: false }),
       genItem(true, { typing: false }),
       genItem(false, { typing: false }),
@@ -79,11 +88,29 @@ const App = () => {
       },
       user: (data) => ({
         placement: 'end',
-        editable: true,
         typing: false,
+        footerPlacement: 'outer-end',
         components: {
           header: `User-${data.key}`,
           avatar: () => <Avatar icon={<UserOutlined />} />,
+          footer: () => (
+            <Actions
+              items={[
+                data.editable
+                  ? { key: 'done', icon: <CheckOutlined />, label: 'done' }
+                  : {
+                      key: 'edit',
+                      icon: <EditOutlined />,
+                      label: 'edit',
+                    },
+              ]}
+              onClick={({ key }) => update(data.key, { editable: key === 'edit' })}
+            />
+          ),
+        },
+        onEditing: (content) => {
+          console.log(`editing User-${data.key}: `, content);
+          update(data.key, { content });
         },
       }),
       divider: {
@@ -107,7 +134,6 @@ const App = () => {
     }),
     [],
   );
-
   return (
     <Flex vertical gap="small">
       <Flex gap="small" justify="space-between">
@@ -117,14 +143,14 @@ const App = () => {
             onClick={() => {
               const chatItems = items.filter((item) => item.role === 'ai' || item.role === 'user');
               const isAI = !!(chatItems.length % 2);
-              appendItem(genItem(isAI, { typing: { effect: 'fade-in', step: [20, 50] } }));
+              add(genItem(isAI, { typing: { effect: 'fade-in', step: [20, 50] } }));
             }}
           >
             Add Bubble
           </Button>
           <Button
             onClick={() => {
-              appendItem({
+              add({
                 key: getKey(),
                 role: 'ai',
                 typing: { effect: 'fade-in', step: 6 },
@@ -141,21 +167,21 @@ const App = () => {
           </Button>
           <Button
             onClick={() => {
-              setItems([...items, { key: getKey(), role: 'divider', content: 'Divider' }]);
+              set([...items, { key: getKey(), role: 'divider', content: 'Divider' }]);
             }}
           >
             Add Divider
           </Button>
           <Button
             onClick={() => {
-              setItems((pre) => [genItem(false), genItem(true), genItem(false), ...pre]);
+              set((pre) => [genItem(false), genItem(true), genItem(false), ...pre]);
             }}
           >
             Add To Pre
           </Button>
           <Button
             onClick={() => {
-              setItems((pre) => [
+              set((pre) => [
                 ...pre,
                 { key: getKey(), role: 'reference', placement: 'end', content: 'Ant Design X' },
                 genItem(false),

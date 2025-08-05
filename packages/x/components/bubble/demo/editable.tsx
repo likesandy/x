@@ -13,6 +13,7 @@ const App = () => {
         <Bubble
           editable={editable}
           content={content}
+          typing
           components={{
             avatar: <Avatar icon={<UserOutlined />} />,
             footer: (

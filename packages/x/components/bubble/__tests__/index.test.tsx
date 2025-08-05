@@ -974,6 +974,115 @@ describe('bubble', () => {
     });
   });
 
+  describe('可编辑功能', () => {
+    it('应该支持 editable 属性', () => {
+      const { container } = render(<Bubble content="可编辑内容" editable />);
+
+      const contentElement = container.querySelector('.ant-bubble-content');
+      expect(contentElement).toHaveClass('ant-bubble-content-editing');
+
+      const editableDiv = container.querySelector('[contenteditable="true"]');
+      expect(editableDiv).toBeInTheDocument();
+      expect(editableDiv).toHaveTextContent('可编辑内容');
+    });
+
+    it('应该支持 onEditing 回调', () => {
+      const onEditing = jest.fn();
+      const { container } = render(<Bubble content="初始内容" editable onEditing={onEditing} />);
+
+      const editableDiv = container.querySelector('[contenteditable="true"]')!;
+
+      // 模拟输入事件
+      fireEvent.input(editableDiv, { target: { textContent: '修改后的内容' } });
+
+      expect(onEditing).toHaveBeenCalledWith('修改后的内容');
+    });
+
+    it('应该拒绝非字符串内容用于可编辑模式', () => {
+      // 捕获控制台错误
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      expect(() => {
+        render(<Bubble content={<div>非字符串内容</div>} editable />);
+      }).toThrow('Content of editable Bubble should be string');
+
+      consoleSpy.mockRestore();
+    });
+
+    it('应该支持 editable 与 typing 同时启用时优先显示编辑模式', () => {
+      const { container } = render(<Bubble content="测试内容" editable typing />);
+
+      const contentElement = container.querySelector('.ant-bubble-content');
+      expect(contentElement).toHaveClass('ant-bubble-content-editing');
+
+      // 应该显示可编辑的 div，而不是动画内容
+      const editableDiv = container.querySelector('[contenteditable="true"]');
+      expect(editableDiv).toBeInTheDocument();
+
+      // 不应该有动画相关的类名
+      expect(container.querySelector('.ant-bubble-typing')).not.toBeInTheDocument();
+      expect(container.querySelector('.ant-bubble-fade-in')).not.toBeInTheDocument();
+    });
+
+    it('应该支持 editable 与 loading 同时启用时优先显示加载状态', () => {
+      const { container } = render(<Bubble content="测试内容" editable loading />);
+
+      // 应该显示加载状态
+      const loadingElement = container.querySelector('.ant-bubble-dot');
+      expect(loadingElement).toBeInTheDocument();
+
+      // 不应该显示可编辑内容
+      const editableDiv = container.querySelector('[contenteditable="true"]');
+      expect(editableDiv).not.toBeInTheDocument();
+    });
+
+    it('应该支持 editable 模式下 contentRender 被忽略', () => {
+      const contentRender = (content: string) => (
+        <span className="rendered-content">{content.toUpperCase()}</span>
+      );
+
+      const { container } = render(
+        <Bubble content="hello" editable contentRender={contentRender} />,
+      );
+
+      // 应该显示原始内容，而不是经过 contentRender 处理的内容
+      const editableDiv = container.querySelector('[contenteditable="true"]')!;
+      expect(editableDiv).toHaveTextContent('hello');
+      expect(editableDiv).not.toHaveTextContent('HELLO');
+      expect(container.querySelector('.rendered-content')).not.toBeInTheDocument();
+    });
+
+    it('应该支持 editable 模式下空内容', () => {
+      const { container } = render(<Bubble content="" editable />);
+
+      const editableDiv = container.querySelector('[contenteditable="true"]')!;
+      expect(editableDiv).toHaveTextContent('');
+    });
+
+    it('应该支持 editable 模式下 onEditing 为 undefined', () => {
+      const { container } = render(<Bubble content="测试内容" editable />);
+
+      const editableDiv = container.querySelector('[contenteditable="true"]')!;
+
+      // 不应该抛出错误
+      expect(() => {
+        fireEvent.input(editableDiv, { target: { textContent: '新内容' } });
+      }).not.toThrow();
+    });
+
+    it('应该支持 editable 模式下输入空内容', () => {
+      const onEditing = jest.fn();
+      const { container } = render(<Bubble content="测试内容" editable onEditing={onEditing} />);
+
+      const editableDiv = container.querySelector('[contenteditable="true"]')!;
+
+      // 模拟输入空内容
+      fireEvent.input(editableDiv, { target: { textContent: '' } });
+
+      expect(onEditing).toHaveBeenCalledWith('');
+    });
+  });
+
   describe('事件处理', () => {
     it('应该支持原生 DOM 事件', () => {
       const onClick = jest.fn();

@@ -150,6 +150,9 @@ export type RoleProps = Pick<
   | 'footerPlacement'
   | 'components'
   | 'editable'
+  | 'onTyping'
+  | 'onTypingComplete'
+  | 'onEditing'
 >;
 
 export type FuncRoleProps = (data: BubbleData) => RoleProps;

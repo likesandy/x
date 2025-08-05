@@ -14,6 +14,10 @@ export const EditableContent: React.FC<{
     onEditing?.(e.target.textContent || ''),
   );
 
+  React.useEffect(() => {
+    mockInputRef.current!.textContent = content;
+  }, []);
+
   // 拒绝非 string content，保证 div 渲染纯文本（Text Node）而不是 HTML
   if (typeof content !== 'string') throw new Error('Content of editable Bubble should be string');
 
@@ -26,9 +30,7 @@ export const EditableContent: React.FC<{
        * input、textarea 是固定行为、固定宽高的元素，无法对内容自适应，体验差
        * div.contentEditable 提供了编辑 innerHTML 的能力，同时具备内容自适应能力，体验好
        */
-      <div ref={mockInputRef} contentEditable onInput={onInput}>
-        {content}
-      </div>
+      <div ref={mockInputRef} contentEditable onInput={onInput} />
     ),
     [],
   );
