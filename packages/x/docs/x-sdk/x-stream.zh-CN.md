@@ -38,6 +38,8 @@ async function request() {
 
 ## 代码演示
 
+<code src="./demos/x-stream/default-protocol.tsx">默认协议 - SSE</code> <code src="./demos/x-stream/custom-protocol.tsx">自定义协议</code>
+
 ## API
 
 ### XStreamOptions
