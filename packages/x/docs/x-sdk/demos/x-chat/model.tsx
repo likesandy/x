@@ -1,6 +1,7 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
 import { OpenAIChatProvider, useXChat, XModel } from '@ant-design/x-sdk';
+import { XModelMessage, XModelParams, XModelResponse } from '@ant-design/x-sdk/es/x-model';
 import { Flex, type GetProp } from 'antd';
 import React from 'react';
 
@@ -31,7 +32,7 @@ const App = () => {
   const [content, setContent] = React.useState('');
   const [provider] = React.useState(
     new OpenAIChatProvider({
-      request: XModel(BASE_URL, {
+      request: XModel<XModelParams, XModelResponse>(BASE_URL, {
         manual: true,
         params: {
           model: MODEL,

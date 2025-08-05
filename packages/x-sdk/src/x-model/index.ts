@@ -12,8 +12,8 @@ export interface XModelMessage extends AnyObject {
 }
 
 export interface XModelParams extends AnyObject {
-  model: string;
-  messages: XModelMessage[];
+  model?: string;
+  messages?: XModelMessage[];
 
   frequency_penalty?: number;
   logit_bias?: AnyObject;
@@ -123,7 +123,7 @@ function XModel<Input = XModelParams, Output = XModelResponse>(
   baseURL: string,
   options?: XRequestOptions<Input, Output>,
 ) {
-  return XRequest(baseURL, options);
+  return XRequest<Input, Output>(baseURL, options);
 }
 
 export default XModel;

@@ -135,21 +135,19 @@ export default function useXChat<
   // For agent to use. Will filter out loading and error message
   const getRequestMessages = () => getFilteredMessages(getMessages());
 
-  const onRequest = useEvent((requestParams: ChatMessage & Partial<Input>) => {
+  const onRequest = useEvent((requestParams: Partial<Input>) => {
     let loadingMsgId: number | string | null = null;
+    const message = provider.transformLocalMessage(requestParams);
     // Add placeholder message
     setMessages((ori) => {
-      let nextMessages = [...ori, createMessage(requestParams, 'local')];
+      let nextMessages = [...ori, createMessage(message, 'local')];
       if (requestPlaceholder) {
         let placeholderMsg: ChatMessage;
         if (typeof requestPlaceholder === 'function') {
           // typescript has bug that not get real return type when use `typeof function` check
-          placeholderMsg = (requestPlaceholder as RequestPlaceholderFn<ChatMessage>)(
-            requestParams,
-            {
-              messages: getFilteredMessages(nextMessages),
-            },
-          );
+          placeholderMsg = (requestPlaceholder as RequestPlaceholderFn<ChatMessage>)(message, {
+            messages: getFilteredMessages(nextMessages),
+          });
         } else {
           placeholderMsg = requestPlaceholder;
         }
@@ -212,7 +210,7 @@ export default function useXChat<
           // Update as error
           if (typeof requestFallback === 'function') {
             // typescript has bug that not get real return type when use `typeof function` check
-            fallbackMsg = await (requestFallback as RequestFallbackFn<ChatMessage>)(requestParams, {
+            fallbackMsg = await (requestFallback as RequestFallbackFn<ChatMessage>)(message, {
               error,
               messages: getRequestMessages(),
             });
