@@ -49,6 +49,10 @@ export interface BubbleProps<ContentType extends BubbleContentType = string>
   content: ContentType;
   contentRender?: (content: ContentType) => React.ReactNode;
   /**
+   * @description 是否可编辑，提供一个仅针对 content 为 string 的编辑应用场景
+   */
+  editable?: boolean;
+  /**
    * @description 动画配置，仅在 content 为 string 或 contentRender 返回 string 时生效
    */
   typing?: boolean | BubbleAnimationOption;
@@ -91,6 +95,10 @@ export interface BubbleProps<ContentType extends BubbleContentType = string>
    * @description 动画结束回调
    */
   onTypingComplete?: (content: string) => void;
+  /**
+   * @description 编辑态下内容变化时回调
+   */
+  onEditing?: (content: string) => void;
 }
 
 export interface BubbleListRef {
