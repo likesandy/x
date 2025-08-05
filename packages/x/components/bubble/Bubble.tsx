@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import React from 'react';
 import useXComponentConfig from '../_util/hooks/use-x-component-config';
 import { useXProviderContext } from '../x-provider';
+import { EditableContent } from './EditableContent';
 import {
   BubbleAnimationOption,
   BubbleContentType,
@@ -26,6 +27,7 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
     placement = 'start',
     content,
     contentRender,
+    editable = false,
     typing,
     streaming = false,
     variant = 'filled',
@@ -36,6 +38,7 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
     loadingRender,
     onTyping,
     onTypingComplete,
+    onEditing,
     ...restProps
   },
   ref,
@@ -141,16 +144,25 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
             variant !== 'borderless' && `${prefixCls}-content-${shape}`,
             contextConfig.classNames.content,
             classNames.content,
+            {
+              [`${prefixCls}-content-editing`]: editable,
+            },
           )}
         >
-          {isFooterIn ? (
-            <div className={classnames(`${prefixCls}-content-with-footer`)}>{_content}</div>
+          {editable ? (
+            <EditableContent content={content} onEditing={onEditing} />
           ) : (
-            _content
+            <>
+              {isFooterIn ? (
+                <div className={classnames(`${prefixCls}-content-with-footer`)}>{_content}</div>
+              ) : (
+                _content
+              )}
+              {isFooterIn && renderFooter()}
+            </>
           )}
-          {isFooterIn && renderFooter()}
         </div>
-        {!isFooterIn && renderFooter()}
+        {!editable && !isFooterIn && renderFooter()}
       </div>
     );
   };
@@ -214,7 +226,7 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
     <div className={rootMergedCls} style={rootMergedStyle} {...restProps} ref={rootDiv}>
       {renderAvatar()}
       {renderContent()}
-      {renderExtra()}
+      {!loading && !editable && renderExtra()}
     </div>
   );
 };
