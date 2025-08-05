@@ -35,7 +35,7 @@ const App: React.FC = () => {
           { name: 'description', desc: locale.description },
         ]}
       >
-        <FileCard name="pdf-file.pdf" size={1024} />
+        <FileCard name="pdf-file.pdf" byte={1024} />
       </SemanticPreview>
     </>
   );
