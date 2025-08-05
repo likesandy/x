@@ -28,10 +28,11 @@ export default abstract class AbstractChatProvider<ChatMessage, Input, Output> {
   }
 
   abstract transformParams(
-    requestParams: ChatMessage & Partial<Input>,
+    requestParams: Partial<Input>,
     options: XRequestOptions<Input, Output>,
   ): Input;
 
+  abstract transformLocalMessage(requestParams: Partial<Input>): ChatMessage;
   abstract transformMessage(info: TransformMessage<ChatMessage, Output>): ChatMessage;
 
   getMessages(): ChatMessage[] {

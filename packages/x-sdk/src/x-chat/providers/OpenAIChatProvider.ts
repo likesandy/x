@@ -11,13 +11,10 @@ import AbstractChatProvider, { TransformMessage } from './AbstractChatProvider';
  */
 export default class OpenAIChatProvider<
   ChatMessage extends XModelMessage = XModelMessage,
-  Input = XModelParams,
+  Input extends XModelParams = XModelParams,
   Output extends Partial<Record<SSEFields, any>> = Partial<Record<SSEFields, any>>,
 > extends AbstractChatProvider<ChatMessage, Input, Output> {
-  transformParams(
-    requestParams: ChatMessage & Partial<Input>,
-    options: XRequestOptions<Input, Output>,
-  ): Input {
+  transformParams(requestParams: Partial<Input>, options: XRequestOptions<Input, Output>): Input {
     let message: ChatMessage;
     const otherRequestParams = {};
 
@@ -27,7 +24,7 @@ export default class OpenAIChatProvider<
         content: requestParams,
       } as unknown as ChatMessage;
     } else {
-      message = requestParams as ChatMessage;
+      message = requestParams as unknown as ChatMessage;
     }
     const messages = this.getMessages();
     messages.push(message);
@@ -35,7 +32,18 @@ export default class OpenAIChatProvider<
       ...(options?.params || {}),
       ...otherRequestParams,
       messages,
-    } as Input;
+    } as unknown as Input;
+  }
+
+  transformLocalMessage(requestParams: Partial<Input>): ChatMessage {
+    const lastMessage = requestParams?.messages?.[requestParams?.messages?.length - 1];
+    return {
+      role: 'user',
+      content:
+        typeof lastMessage?.content === 'object'
+          ? lastMessage?.content?.text
+          : lastMessage?.content,
+    } as unknown as ChatMessage;
   }
 
   transformMessage(info: TransformMessage<ChatMessage, Output>): ChatMessage {

@@ -19,6 +19,10 @@ export default class DefaultChatProvider<ChatMessage, Input, Output> extends Abs
     } as Input;
   }
 
+  transformLocalMessage(requestParams: Partial<Input>): ChatMessage {
+    return requestParams as unknown as ChatMessage;
+  }
+
   transformMessage(info: TransformMessage<ChatMessage, Output>): ChatMessage {
     const { chunk, chunks, originMessage } = info;
 
