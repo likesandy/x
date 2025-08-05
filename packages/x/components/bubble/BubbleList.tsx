@@ -4,11 +4,22 @@ import pickAttrs from 'rc-util/es/pickAttrs';
 import * as React from 'react';
 import { useXProviderContext } from '../x-provider';
 import Bubble from './Bubble';
-import { BubbleData, BubbleListProps, BubbleListRef, BubbleRef } from './interface';
+import {
+  BubbleData,
+  BubbleListProps,
+  BubbleListRef,
+  BubbleRef,
+  FuncRoleProps,
+  RoleProps,
+} from './interface';
 import useBubbleListStyle from './style';
 
 interface BubblesRecord {
   [key: string]: BubbleRef;
+}
+
+function roleCfgIsFunction(roleCfg: RoleProps | FuncRoleProps): roleCfg is FuncRoleProps {
+  return typeof roleCfg === 'function' && roleCfg instanceof Function;
 }
 
 const MemoedBubble = React.memo(Bubble);
@@ -123,7 +134,13 @@ const BubbleList: React.ForwardRefRenderFunction<BubbleListRef, BubbleListProps>
       onScroll={onScroll}
     >
       {renderData.map((item) => {
-        const mergedProps = item.role ? { ...role?.[item.role], ...item } : item;
+        let mergedProps: BubbleData;
+        if (item.role && role) {
+          const cfg = role[item.role];
+          mergedProps = { ...(roleCfgIsFunction(cfg) ? cfg(item) : cfg), ...item };
+        } else {
+          mergedProps = item;
+        }
         return (
           <BubbleListItem
             {...omit(mergedProps, ['key'])}

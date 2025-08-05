@@ -2,7 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { waitFakeTimer } from '../../../tests/utils';
 import BubbleList from '../BubbleList';
-import { BubbleData, BubbleListRef } from '../interface';
+import { BubbleData, BubbleListRef, RoleType } from '../interface';
 
 describe('Bubble.List', () => {
   beforeAll(() => {
@@ -109,6 +109,26 @@ describe('Bubble.List', () => {
           placement: 'start' as const,
           variant: 'filled' as const,
         },
+      };
+
+      const { container } = render(<BubbleList items={mockItems} role={roleConfig} />);
+      const bubbles = container.querySelectorAll('.ant-bubble');
+
+      // autoScroll 启用情况下，数据渲染是倒序的
+      expect(bubbles[1]).toHaveClass('ant-bubble-end'); // user role
+      expect(bubbles[0]).toHaveClass('ant-bubble-start'); // ai role
+    });
+
+    it('应支持 role 函数配置', () => {
+      const roleConfig: RoleType = {
+        user: () => ({
+          placement: 'end' as const,
+          variant: 'outlined' as const,
+        }),
+        ai: () => ({
+          placement: 'start' as const,
+          variant: 'filled' as const,
+        }),
       };
 
       const { container } = render(<BubbleList items={mockItems} role={roleConfig} />);

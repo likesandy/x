@@ -77,14 +77,14 @@ const App = () => {
           footer: (content) => <Actions items={actionItems} onClick={() => console.log(content)} />,
         },
       },
-      user: {
+      user: (data) => ({
         placement: 'end',
         typing: false,
         components: {
-          header: 'User',
+          header: `User-${data.key}`,
           avatar: () => <Avatar icon={<UserOutlined />} />,
         },
-      },
+      }),
       divider: {
         variant: 'borderless',
         styles: { root: { margin: 0 }, body: { width: '100%' } },

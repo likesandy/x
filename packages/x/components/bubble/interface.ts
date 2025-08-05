@@ -124,7 +124,7 @@ export type BubbleData = BubbleProps<BubbleContentType> & {
   role?: RemainRole | AnyStr;
 };
 
-export type RoleType = Pick<
+export type RoleProps = Pick<
   BubbleData,
   | 'typing'
   | 'variant'
@@ -143,6 +143,11 @@ export type RoleType = Pick<
   | 'components'
 >;
 
+export type FuncRoleProps = (data: BubbleData) => RoleProps;
+
+export type RoleType = Partial<Record<RemainRole, RoleProps | FuncRoleProps>> &
+  Record<AnyStr, RoleProps | FuncRoleProps>;
+
 export interface BubbleListProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
   prefixCls?: string;
   rootClassName?: string;
@@ -152,5 +157,5 @@ export interface BubbleListProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   /**
    * @description 数据类别基础配置项，优先级低，会被 items 配置覆盖。默认 ai、system、user 三类，允许自定义类别
    */
-  role?: Partial<Record<RemainRole, RoleType>> & Record<AnyStr, RoleType>;
+  role?: RoleType;
 }
