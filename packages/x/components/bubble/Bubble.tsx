@@ -108,7 +108,9 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
 
   const renderContent = () => {
     if (loading) return loadingRender ? loadingRender() : <Loading prefixCls={prefixCls} />;
-    const _content = (
+    const _content = editable ? (
+      <EditableContent content={content} onEditing={onEditing} />
+    ) : (
       <>
         {usingInnerAnimation ? (
           <TypingContent
@@ -149,20 +151,14 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
             },
           )}
         >
-          {editable ? (
-            <EditableContent content={content} onEditing={onEditing} />
+          {isFooterIn ? (
+            <div className={classnames(`${prefixCls}-content-with-footer`)}>{_content}</div>
           ) : (
-            <>
-              {isFooterIn ? (
-                <div className={classnames(`${prefixCls}-content-with-footer`)}>{_content}</div>
-              ) : (
-                _content
-              )}
-              {isFooterIn && renderFooter()}
-            </>
+            _content
           )}
+          {isFooterIn && renderFooter()}
         </div>
-        {!editable && !isFooterIn && renderFooter()}
+        {!isFooterIn && renderFooter()}
       </div>
     );
   };
@@ -226,7 +222,7 @@ const Bubble: React.ForwardRefRenderFunction<BubbleRef, BubbleProps> = (
     <div className={rootMergedCls} style={rootMergedStyle} {...restProps} ref={rootDiv}>
       {renderAvatar()}
       {renderContent()}
-      {!loading && !editable && renderExtra()}
+      {!loading && renderExtra()}
     </div>
   );
 };

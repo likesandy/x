@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 
 const App = () => {
   const [editable, setEditable] = useState(false);
-  const [content, setContent] = useState('可编辑气泡');
+  const [content, setContent] = useState('editable bubble');
 
   return (
     <Flex vertical gap="small">
@@ -30,7 +30,10 @@ const App = () => {
               />
             ),
           }}
-          onEditing={setContent}
+          onEditing={(content) => {
+            // 应该对 content 做 xss 处理
+            setContent(content);
+          }}
         />
       </Flex>
     </Flex>

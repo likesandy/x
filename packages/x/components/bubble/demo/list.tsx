@@ -29,7 +29,7 @@ let id = 0;
 
 const getKey = () => `bubble_${id++}`;
 
-const genItem = (isAI: boolean, config?: Partial<BubbleData>) => {
+const genItem = (isAI: boolean, config?: Partial<BubbleData>): BubbleData => {
   return {
     key: getKey(),
     role: isAI ? 'ai' : 'user',
@@ -79,6 +79,7 @@ const App = () => {
       },
       user: {
         placement: 'end',
+        editable: true,
         typing: false,
         components: {
           header: 'User',
@@ -116,7 +117,7 @@ const App = () => {
             onClick={() => {
               const chatItems = items.filter((item) => item.role === 'ai' || item.role === 'user');
               const isAI = !!(chatItems.length % 2);
-              appendItem(genItem(isAI, { typing: { effect: 'fade-in', step: [30, 50] } }));
+              appendItem(genItem(isAI, { typing: { effect: 'fade-in', step: [20, 50] } }));
             }}
           >
             Add Bubble
@@ -126,7 +127,7 @@ const App = () => {
               appendItem({
                 key: getKey(),
                 role: 'ai',
-                typing: { effect: 'fade-in', step: [30, 50] },
+                typing: { effect: 'fade-in', step: 6 },
                 content: text,
                 contentRender: (content) => (
                   <Typography>

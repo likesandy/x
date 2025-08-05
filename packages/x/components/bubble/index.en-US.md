@@ -28,6 +28,7 @@ Often used when chatting.
 <code src="./demo/stream.tsx">stream</code>
 <code src="./demo/custom-content.tsx" >custom rendered content</code>
 <code src="./demo/markdown.tsx">render the markdown content</code>
+<code src="./demo/editable.tsx">editable bubble</code>
 <code src="./demo/list.tsx" > Bubble.List</code>
 <code src="./demo/list-ref.tsx">Bubble.List Ref</code>
 <code src="./demo/semantic-list-custom.tsx">semantic customization</code>
