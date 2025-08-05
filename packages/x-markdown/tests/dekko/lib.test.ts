@@ -6,7 +6,6 @@ $('lib').isDirectory().hasFile('index.js').hasFile('index.d.ts');
 $('lib/*')
   .filter(
     (filename: string) =>
-      !filename.endsWith('plugins') &&
       !filename.endsWith('hooks') &&
       !filename.endsWith('index.js') &&
       !filename.endsWith('index.d.ts') &&
