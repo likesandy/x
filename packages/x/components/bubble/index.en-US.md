@@ -80,7 +80,7 @@ In [this example](#bubble-demo-stream), you can try to force the streaming flag 
 | rootStyle | Root Node Style | React.CSSProperties | - | - |
 | items | Bubble data list, `key`, `role` required | (BubbleProps & { key: string \| number, role: string }) [] | - | - |
 | autoScroll | Whether to auto-scroll | boolean | `true` | - |
-| role | Role default configuration | Partial<Record<`ai` \| `system` \| `user`, [RoleType](#roletype)>> & Record<string, RoleType> | - | - |
+| role | Role default configuration | [RoleType](#roletype) | - | - |
 
 #### ContentType
 
@@ -136,7 +136,7 @@ interface BubbleAnimationOption {
 #### RoleType
 
 ```typescript
-type RoleType = Pick<
+type RoleProps = Pick<
   BubbleProps,
   | 'typing'
   | 'variant'
@@ -154,6 +154,11 @@ type RoleType = Pick<
   | 'footerPlacement'
   | 'components'
 > & { key: string | number; role: string };
+
+export type FuncRoleProps = (data: BubbleData) => RoleProps;
+
+export type RoleType = Partial<Record<'ai' | 'system' | 'user', RoleProps | FuncRoleProps>> &
+  Record<string, RoleProps | FuncRoleProps>;
 ```
 
 ## Semantic DOM

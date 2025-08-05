@@ -81,7 +81,7 @@ demo:
 | rootStyle | 根节点样式 | React.CSSProperties | - | - |
 | items | 气泡数据列表，`key`，`role` 必填 | (BubbleProps & { key: string \| number, role: string })[] | - | - |
 | autoScroll | 是否自动滚动 | boolean | `true` | - |
-| role | 角色默认配置 | Partial<Record<`ai` \| `system` \| `user`, [RoleType](#roletype)>> & Record<string, RoleType> | - | - |
+| role | 角色默认配置 | [RoleType](#roletype) | - | - |
 
 #### ContentType
 
@@ -137,7 +137,7 @@ interface BubbleAnimationOption {
 #### RoleType
 
 ```typescript
-type RoleType = Pick<
+type RoleProps = Pick<
   BubbleProps,
   | 'typing'
   | 'variant'
@@ -155,6 +155,11 @@ type RoleType = Pick<
   | 'footerPlacement'
   | 'components'
 > & { key: string | number; role: string };
+
+export type FuncRoleProps = (data: BubbleData) => RoleProps;
+
+export type RoleType = Partial<Record<'ai' | 'system' | 'user', RoleProps | FuncRoleProps>> &
+  Record<string, RoleProps | FuncRoleProps>;
 ```
 
 ## Semantic DOM
