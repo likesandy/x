@@ -20,29 +20,10 @@ export const getApiConfig = (): ApiConfig => {
   const model = process.env.REACT_APP_MODEL;
   const apiKey = process.env.REACT_APP_API_KEY;
 
-  // Debug: Log environment variables (remove in production)
-  console.log('🔧 Environment Variables Debug:', {
-    baseURL,
-    path,
-    model,
-    apiKey: apiKey ? '***' + apiKey.slice(-4) : 'undefined',
-  });
-
-  // Validate required configuration
-  if (!apiKey || apiKey === 'your_api_key_here') {
-    console.warn('⚠️ API Key is not configured. Please set REACT_APP_API_KEY in your .env file');
-  }
-
-  if (!baseURL) {
-    console.warn(
-      '⚠️ Base URL is not configured. Please set REACT_APP_API_BASE_URL in your .env file',
-    );
-  }
-
   return {
-    baseURL: baseURL || 'https://api.moonshot.cn/v1',
-    path: path || '/chat/completions',
-    model: model || 'kimi-k2-0711-preview',
-    apiKey: apiKey || '',
+    baseURL: baseURL!,
+    path: path!,
+    model: model!,
+    apiKey: apiKey!,
   };
 };
