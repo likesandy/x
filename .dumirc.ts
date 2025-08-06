@@ -1,6 +1,6 @@
 import os from 'node:os';
-import path from 'path';
 import { defineConfig } from 'dumi';
+import path from 'path';
 
 import rehypeAntd from './.dumi/rehypeAntd';
 import remarkAntd from './.dumi/remarkAntd';
@@ -12,6 +12,18 @@ export default defineConfig({
   // For <Link prefetch />
   routePrefetch: {},
   manifest: {},
+
+  // 配置webpack以启用sourcemap调试（当不使用Mako时）
+  // chainWebpack(memo, { env }) {
+  //   if (env === 'development') {
+  //     // 启用最佳调试体验的sourcemap
+  //     memo.devtool('eval-source-map');
+  //   }
+  //   return memo;
+  // },
+
+  // // Mako构建器配置
+  // mako: ['Darwin', 'Linux'].includes(os.type()) ? {} : false,
 
   conventionRoutes: {
     // to avoid generate routes for .dumi/pages/index/components/xx
@@ -25,7 +37,6 @@ export default defineConfig({
       : false,
   hash: true,
   mfsu: false,
-  mako: ['Darwin', 'Linux'].includes(os.type()) ? {} : false,
   crossorigin: {},
   runtimePublicPath: {},
   outputPath: '_site',
@@ -43,6 +54,11 @@ export default defineConfig({
   ],
   define: {
     antdReproduceVersion: version,
+    // Environment variables for API configuration
+    'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL),
+    'process.env.REACT_APP_API_PATH': JSON.stringify(process.env.REACT_APP_API_PATH),
+    'process.env.REACT_APP_MODEL': JSON.stringify(process.env.REACT_APP_MODEL),
+    'process.env.REACT_APP_API_KEY': JSON.stringify(process.env.REACT_APP_API_KEY),
   },
   externals: {
     // optimize build of GPT-Vis
