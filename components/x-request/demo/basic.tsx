@@ -1,24 +1,22 @@
 import { LoadingOutlined, TagsOutlined } from '@ant-design/icons';
+import type { ThoughtChainItem } from '@ant-design/x';
 import { ThoughtChain, XRequest } from '@ant-design/x';
 import { Button, Descriptions, Splitter } from 'antd';
 import React from 'react';
-
-import type { ThoughtChainItem } from '@ant-design/x';
+import { getApiConfig } from '../config';
 
 /**
  * 🔔 Please replace the BASE_URL, PATH, MODEL, API_KEY with your own values.
  */
-const BASE_URL = 'https://api.example.com';
-const PATH = '/chat';
-const MODEL = 'gpt-3.5-turbo';
-// const API_KEY = '';
+
+const config = getApiConfig();
 
 const exampleRequest = XRequest({
-  baseURL: BASE_URL + PATH,
-  model: MODEL,
+  baseURL: config.baseURL + config.path,
+  model: config.model,
 
   /** 🔥🔥 Its dangerously! */
-  // dangerouslyApiKey: API_KEY
+  dangerouslyApiKey: config.apiKey,
 });
 
 const App = () => {
@@ -55,8 +53,8 @@ const App = () => {
     <Splitter>
       <Splitter.Panel>
         <Button type="primary" disabled={status === 'pending'} onClick={request}>
-          Request - {BASE_URL}
-          {PATH}
+          Request - {config.baseURL}
+          {config.path}
         </Button>
       </Splitter.Panel>
       <Splitter.Panel style={{ marginLeft: 16 }}>
@@ -68,7 +66,7 @@ const App = () => {
               icon: status === 'pending' ? <LoadingOutlined /> : <TagsOutlined />,
               description:
                 status === 'error' &&
-                exampleRequest.baseURL === BASE_URL + PATH &&
+                exampleRequest.baseURL === config.baseURL + config.path &&
                 'Please replace the BASE_URL, PATH, MODEL, API_KEY with your own values.',
               content: (
                 <Descriptions column={1}>

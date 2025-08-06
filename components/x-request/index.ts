@@ -1,10 +1,8 @@
-import XStream from '../x-stream';
-import xFetch from './x-fetch';
-
-import type { SSEOutput, XStreamOptions } from '../x-stream';
-import type { XFetchOptions } from './x-fetch';
-
 import type { AnyObject } from '../_util/type';
+import type { SSEOutput, XStreamOptions } from '../x-stream';
+import XStream from '../x-stream';
+import type { XFetchOptions } from './x-fetch';
+import xFetch from './x-fetch';
 
 export interface XRequestBaseOptions {
   /**
@@ -203,6 +201,7 @@ class XRequestClass {
     callbacks?: XRequestCallbacks<Output>,
   ) => {
     const chunks: Output[] = [];
+    // ！ 对SSE流式处理二进制解码
     const stream = XStream<Output>({
       readableStream: response.body!,
     });

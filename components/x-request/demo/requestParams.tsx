@@ -1,20 +1,20 @@
 import { LoadingOutlined, TagsOutlined } from '@ant-design/icons';
+import type { ThoughtChainItem } from '@ant-design/x';
 import { ThoughtChain, XRequest } from '@ant-design/x';
 import { Button, Descriptions, Splitter } from 'antd';
 import React from 'react';
+import { getApiConfig } from '../config';
 
-import type { ThoughtChainItem } from '@ant-design/x';
-
-const BASE_URL = 'https://api.example.com/agent';
+// Load configuration from environment variables
+const config = getApiConfig();
 
 const exampleRequest = XRequest({
-  baseURL: BASE_URL,
-});
+  baseURL: config.baseURL,
+  model: config.model,
 
-interface RequestParams {
-  agentId: number;
-  query: string;
-}
+  /** 🔥🔥 Its dangerously! */
+  dangerouslyApiKey: config.apiKey,
+});
 
 const App = () => {
   const [status, setStatus] = React.useState<ThoughtChainItem['status']>();
@@ -23,10 +23,10 @@ const App = () => {
   async function request() {
     setStatus('pending');
 
-    await exampleRequest.create<RequestParams>(
+    await exampleRequest.create(
       {
-        query: 'Search for the latest technology news',
-        agentId: 111,
+        stream: true,
+        messages: [{ role: 'user', content: '你是谁啊' }],
       },
       {
         onSuccess: (messages) => {
@@ -49,7 +49,7 @@ const App = () => {
     <Splitter>
       <Splitter.Panel>
         <Button type="primary" disabled={status === 'pending'} onClick={request}>
-          Request - {BASE_URL}
+          Request - {config.baseURL}
         </Button>
       </Splitter.Panel>
       <Splitter.Panel style={{ marginLeft: 16 }}>
@@ -61,8 +61,7 @@ const App = () => {
               icon: status === 'pending' ? <LoadingOutlined /> : <TagsOutlined />,
               description:
                 status === 'error' &&
-                exampleRequest.baseURL === BASE_URL &&
-                'Please replace the BASE_URL, RequestParams with your own values.',
+                'Please configure your API settings in the .env file. Check .env.example for reference.',
               content: (
                 <Descriptions column={1}>
                   <Descriptions.Item label="Status">{status || '-'}</Descriptions.Item>

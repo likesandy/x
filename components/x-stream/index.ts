@@ -39,12 +39,15 @@ function splitStream() {
       buffer += streamChunk;
 
       // Split the buffer based on the separator
+      //！ 流切割（\n\n）
       const parts = buffer.split(DEFAULT_STREAM_SEPARATOR);
 
       // Enqueue all complete parts except for the last incomplete one
+      //！ 获取除最后一个元素外的所有数组元素(在流式处理中，数据是分批到达的，最后一部分可能被截断)
       parts.slice(0, -1).forEach((part) => {
         // Skip empty parts
         if (isValidString(part)) {
+          //! 加入到输出队列中
           controller.enqueue(part);
         }
       });
@@ -93,6 +96,7 @@ function splitPart() {
       // Split the chunk into key-value pairs using the partSeparator
       const lines = partChunk.split(DEFAULT_PART_SEPARATOR);
 
+      //！将流式处理后的字符串数组转换为js对象
       const sseEvent = lines.reduce<SSEOutput>((acc, line) => {
         const separatorIndex = line.indexOf(DEFAULT_KV_SEPARATOR);
 
@@ -164,6 +168,7 @@ function XStream<Output = SSEOutput>(options: XStreamOptions<Output>) {
       : /**
          * Uint8Array binary -> string -> SSE part string -> Default Output {@link SSEOutput}
          */
+        //！ 对SSE流式处理二进制解码（流转为utf-8编码 -> 分割（\n\n） -> js转换(string转为js对象) -> 输出）
         readableStream
           .pipeThrough(decoderStream as TransformStream<Uint8Array, string>)
           .pipeThrough(splitStream())
@@ -171,6 +176,7 @@ function XStream<Output = SSEOutput>(options: XStreamOptions<Output>) {
   ) as XReadableStream<Output>;
 
   /** support async iterator */
+  //！自定义迭代器，后续方便for of迭代
   stream[Symbol.asyncIterator] = async function* () {
     const reader = this.getReader();
 
