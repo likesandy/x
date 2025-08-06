@@ -6,16 +6,16 @@ import React from 'react';
 import { getApiConfig } from '../config';
 
 // Load configuration from environment variables
+
 const config = getApiConfig();
 
 const exampleRequest = XRequest({
-  baseURL: config.baseURL,
+  baseURL: config.baseURL + config.path,
   model: config.model,
 
   /** 🔥🔥 Its dangerously! */
   dangerouslyApiKey: config.apiKey,
 });
-
 const App = () => {
   const [status, setStatus] = React.useState<ThoughtChainItem['status']>();
   const [lines, setLines] = React.useState<Record<string, string>[]>([]);
