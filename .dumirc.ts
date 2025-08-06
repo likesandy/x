@@ -55,10 +55,10 @@ export default defineConfig({
   define: {
     antdReproduceVersion: version,
     // Environment variables for API configuration
-    'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL),
-    'process.env.REACT_APP_API_PATH': JSON.stringify(process.env.REACT_APP_API_PATH),
-    'process.env.REACT_APP_MODEL': JSON.stringify(process.env.REACT_APP_MODEL),
-    'process.env.REACT_APP_API_KEY': JSON.stringify(process.env.REACT_APP_API_KEY),
+    'process.env.REACT_APP_API_BASE_URL': process.env.REACT_APP_API_BASE_URL,
+    'process.env.REACT_APP_API_PATH': process.env.REACT_APP_API_PATH,
+    'process.env.REACT_APP_MODEL': process.env.REACT_APP_MODEL,
+    'process.env.REACT_APP_API_KEY': process.env.REACT_APP_API_KEY,
   },
   externals: {
     // optimize build of GPT-Vis
