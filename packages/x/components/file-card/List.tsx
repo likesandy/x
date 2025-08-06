@@ -120,7 +120,7 @@ const List: React.FC<FileCardListProps> = (props) => {
 
   return (
     <div className={`${compCls}-wrapper`}>
-      <div className={mergedCls} style={{...style, ...styles?.root}} ref={containerRef} onScroll={checkPing}>
+      <div className={mergedCls} dir={direction} style={{...style, ...styles?.root}} ref={containerRef} onScroll={checkPing}>
         <CSSMotionList
           keys={list.map(item => ({ key: item.key, item }))}
           motionName={`${compCls}-motion`}
