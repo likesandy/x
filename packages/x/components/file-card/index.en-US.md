@@ -17,6 +17,7 @@ Used to display files during conversations or input.
 
 <!-- prettier-ignore -->
 <code src="./demo/basic.tsx">Basic</code>
+<code src="./demo/size.tsx">Size</code>
 <code src="./demo/image.tsx">Image</code>
 <code src="./demo/audio.tsx">Audio/Video</code>
 <code src="./demo/mask.tsx">Mask</code>

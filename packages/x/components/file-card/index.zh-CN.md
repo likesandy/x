@@ -16,6 +16,7 @@ description: 用卡片的形式展示文件。
 
 <!-- prettier-ignore -->
 <code src="./demo/basic.tsx">基础用法</code>
+<code src="./demo/size.tsx">卡片大小</code>
 <code src="./demo/image.tsx">图片文件</code>
 <code src="./demo/audio.tsx">音视频类型</code>
 <code src="./demo/mask.tsx">使用遮罩</code>
