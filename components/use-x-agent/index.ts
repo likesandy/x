@@ -2,6 +2,7 @@ import React from 'react';
 import type { AnyObject } from '../_util/type';
 import XRequest from '../x-request';
 import type { SSEOutput, XStreamOptions } from '../x-stream';
+
 interface RequestFnInfo<Message> extends AnyObject {
   messages?: Message[];
   message?: Message;
@@ -53,8 +54,10 @@ export class XAgent<Message = string, Input = RequestFnInfo<Message>, Output = S
 
     const id = uuid;
     uuid += 1;
+    // ！处理竞态问题
     this.requestingMap[id] = true;
 
+    // ！使用自定义请求或者XRequest请求（默认请求）
     request?.(
       info,
       {
@@ -99,6 +102,7 @@ export default function useXAgent<
 >(config: XAgentConfig<Message, Input, Output>) {
   const { request, ...restConfig } = config;
 
+  // ！创建了XAgent实例
   return React.useMemo(
     () =>
       [

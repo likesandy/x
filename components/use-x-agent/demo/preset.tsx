@@ -1,9 +1,9 @@
 import { LoadingOutlined, TagsOutlined } from '@ant-design/icons';
+import type { ThoughtChainItem } from '@ant-design/x';
 import { ThoughtChain, useXAgent } from '@ant-design/x';
 import { Button, Descriptions, Splitter } from 'antd';
 import React from 'react';
-
-import type { ThoughtChainItem } from '@ant-design/x';
+import { getApiConfig } from '../../x-request/config';
 
 /**
  * 🔔 Please replace the BASE_URL, PATH, MODEL, API_KEY with your own values.
@@ -19,14 +19,16 @@ interface YourMessageType {
   content: string;
 }
 
+const config = getApiConfig();
+
 const App = () => {
   const [status, setStatus] = React.useState<ThoughtChainItem['status']>();
   const [lines, setLines] = React.useState<any[]>([]);
 
   const [agent] = useXAgent<YourMessageType>({
-    baseURL: BASE_URL + PATH,
-    model: MODEL,
-    // dangerouslyApiKey: API_KEY
+    baseURL: config.baseURL + config.path,
+    model: config.model,
+    dangerouslyApiKey: config.apiKey,
   });
 
   async function request() {
